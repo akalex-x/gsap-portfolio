@@ -1,0 +1,22 @@
+# http://stevegrunwell.github.io/wordpress-git/#/10
+
+# Keep these files out of the repo
+/wp-content/themes/twenty*
+/wp-content/upgrade
+/wp-content/uploads
+/wp-content/wphb-cache
+/sitemap.*
+/wp-config.php
+/.htaccess
+*.sql
+node_modules
+**/dummy/
+
+# Hidden files
+.vs-code
+*.DS_Store
+*Thumbs.db
+*.sass-cache*
+*~imageoptim*
+_source
+local-adminer*

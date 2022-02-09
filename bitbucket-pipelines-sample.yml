@@ -1,0 +1,20 @@
+image: atlassian/default-image:2
+pipelines:
+  branches:
+    master:
+      - step:
+         script:
+          - pipe: atlassian/rsync-deploy:0.3.2
+            variables:
+              USER: 'oleg'
+              SERVER: 'clients.pdmdev.co'
+              REMOTE_PATH: '/var/www/clients/clientname.pdmdev.co/wp-content/themes'
+              LOCAL_PATH: 'wp-content/themes/'
+              EXTRA_ARGS: '--no-perms --no-owner --no-group'
+          - pipe: atlassian/rsync-deploy:0.3.2
+            variables:
+              USER: 'oleg'
+              SERVER: 'clients.pdmdev.co'
+              REMOTE_PATH: '/var/www/clients/clientname.pdmdev.co/wp-content/plugins'
+              LOCAL_PATH: 'wp-content/plugins/'
+              EXTRA_ARGS: '--no-perms --no-owner --no-group'

@@ -1,0 +1,19 @@
+// Vendors
+@import "vendor/*";
+
+// Layout
+@import "layout/reset";
+@import "layout/global";
+@import "layout/header";
+@import "layout/menus";
+@import "layout/footer";
+
+//flexible
+@import "flexible/*";
+
+//flexible
+@import "parts/*";
+@import "heros/*";
+
+// Pages
+@import "pages/*";

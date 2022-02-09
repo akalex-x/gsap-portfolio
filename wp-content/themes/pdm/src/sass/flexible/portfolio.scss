@@ -1,0 +1,138 @@
+.portfolio{
+	outline-style: relative;
+	background-color: $black;
+//	&:after{
+//		content: '';
+//		position: absolute;
+//		top: 0;
+//		left: 0;
+//		height: 50%;
+//		max-width: 960px;
+//		transform: skewX(2deg) skewY(-2deg);
+//		width: 70%;
+//		background-color: rgba(12, 12, 12,.75);
+//		z-index: 2;
+//	}
+	&:before{
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 2px;
+		width: 100%;
+		background: linear-gradient(-45deg, #AD2831, #2F97C1, #FC60A8, #7A28CB);
+		background-size: 400% 400%;
+		animation: animatedGradient 12s ease infinite;
+	}
+	h2{
+		position: relative;
+		z-index: 3;
+		color: $white;
+	}
+	.portfolio__images{
+		position: absolute;
+		top: 40%;
+		left: -40%;
+		width:250%;
+		height: 300px;
+		overflow:hidden;
+		z-index: 1;
+		transform: skewX(-10deg) skewY(-4deg);
+		ul{
+			margin-left: 0;
+			width: 100%;
+		}
+		li{
+			position:absolute;
+			padding: 0;
+			list-style: none;
+			padding: 0 1rem;
+			margin: 0;
+			opacity: .25;
+			transition: opacity .25s;
+			width: 200px;
+			@media only screen and (min-width:960px){
+				width: 300px;
+			}
+			&.hover,
+			&:hover{
+				opacity: 1;
+			}
+			&:before{
+				content: none;
+			}
+			img{
+				width:100%;
+			}
+		}
+	}
+	&__items{
+		position: relative;
+		z-index: 3;
+		margin-top: 3rem;
+		ul{
+			margin: 0;
+			li{
+				padding: 0;
+				color: $white;
+				font-size: 2rem;
+				letter-spacing: .1em;
+				text-transform: uppercase;
+				font-family: $display;
+				position: relative;
+				width: 100%;
+				height: 2.5rem;
+				margin-bottom: 1.5rem;
+				display:flex; 
+			    align-items:center;
+				&:before{
+					content: none;
+				}
+				a{
+					position: absolute;
+//					top: 0;
+//					left: 0;
+//					width: 100%;
+//					height: 100%;
+					white-space: nowrap;
+					color: $white;
+					text-decoration: none;
+					display: block;
+					width: 100%;
+					opacity: .25;
+					&:hover{
+						opacity: 1;
+					}
+					span{
+						display: inline-block;
+						&:nth-child(even){
+							color: transparent;
+							-webkit-text-stroke-color: $white;
+							-webkit-text-stroke-width: .02em;
+						}
+					}
+				}
+			}
+		}
+	}
+	@media only screen and (min-width:960px){
+		&__wrap{
+		}
+		h2{
+			font-size: 7em;
+		}
+		&__content{
+			max-width: 900px;
+		}
+		&__items{
+			margin-top: 3rem;
+			ul{
+				li{
+					height: 7.5rem;
+					font-size: 6rem;
+					margin-bottom: 2rem;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,27 @@
+.social-share {
+    display: inline-block;
+
+    &-list, &-list li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+    }
+
+    &-list li {
+        &:not(:first-child) {
+            margin-left: .75em;
+        }
+    }
+
+    &-link {
+        display: block;
+        text-decoration: none;
+
+        .svg-icon {
+            height: 1.1em;
+            width: 1.1em;
+        }
+    }
+}

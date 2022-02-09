@@ -1,0 +1,284 @@
+[type="text"],
+[type="email"],
+[type="password"],
+[type="tel"],
+[type="file"],
+[type="search"],
+[type="number"],
+[type="url"],
+[type="submit"],
+[type="reset"],
+textarea,
+select,
+.gform_previous_button,
+.gform_next_button,
+.select-menu,
+.search-input {
+    @extend %input;
+}
+
+select, .gform_previous_button,
+.gform_next_button,
+[type="submit"],
+[type="reset"],
+[type="button"] {
+    cursor: pointer;
+}
+
+.gform_previous_button,
+.gform_next_button,
+[type="submit"],
+[type="reset"] {
+    @extend .btn;
+
+    > .svg-icon {
+        vertical-align: middle;
+
+    }
+}
+
+.gform_next_button,
+[type="submit"] {
+    &:not(:hover) {
+        background: $info;
+    }
+}
+
+.gform_previous_button,
+[type="reset"] {
+    @extend .btn--outline;
+}
+
+span.required {
+    color: $input_error;
+    font-size: 1em;
+    font-weight: $bold;
+    vertical-align: top;
+    margin-left: 3px;
+}
+
+[type="radio"],
+[type="checkbox"] {
+    margin: auto 0;
+    margin-right: 5px;
+    background: #fff;
+    position: relative;
+    border: 2px solid $input_inactive;
+    border-radius: 2px;
+    appearance: none;
+    vertical-align: text-bottom;
+    overflow: hidden;
+    height: 17px;
+    width: 17px;
+
+    &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+    }
+
+    &:checked {
+        border-color: $input_filled;
+
+        &:after {
+            background: $input_filled;
+            border: 2px solid #fff;
+        }
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $input_active;
+    }
+
+    &:disabled {
+        background: lighten($input_inactive, 10);
+        cursor: not-allowed;
+
+        &:checked {
+            &:after {
+                background: $input_inactive;
+                border-color: lighten($input_inactive, 10);
+            }
+        }
+    }
+}
+
+[type="radio"],
+[type="radio"]:after {
+    border-radius: 50%;
+}
+
+textarea {
+    vertical-align: middle;
+}
+
+.form {
+    &-header {
+        margin-bottom: 2em;
+    }
+
+    &-section {
+        margin: 3em 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &-field {
+        margin: 0 0 1.25em;
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        label {
+            display: block;
+            font-weight: $bold;
+            margin-bottom: .25em;
+        }
+
+        &-group {
+            display: flex;
+            width: 100%;
+
+            &:last-child {
+                margin-bottom: 1em;
+            }
+        }
+
+        &-group & {
+            flex: 1;
+            margin: 0;
+
+            &:not(:last-child) {
+                margin-right: 1em;
+            }
+        }
+    }
+}
+
+.select-menu,
+.search-input,
+.ginput_container_select {
+    display: block;
+    background: $white;
+    border: $input_border_width solid $input_inactive;
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    border-radius: 4px;
+
+    &:before {
+        content: "";
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: -1;
+        height: 0;
+        width: 0;
+        pointer-events: none;
+    }
+
+    select, [type="text"] {
+        background: transparent;
+        z-index: 1;
+        margin: 0;
+    }
+
+    [type="text"] {
+        border-color: transparent;
+    }
+
+    select {
+        padding-right: 2.25rem;
+    }
+}
+
+.ginput_container_select {
+    border: none;
+}
+
+.select-menu,
+.ginput_container_select {
+    &:before {
+        border: 5px solid transparent;
+        border-radius: 2px;
+        border-top-color: $input_filled;
+        top: 5px;
+        right: 1rem;
+    }
+
+    select {
+        &.filled {
+            border-color: $input_filled;
+        }
+
+        &:focus,
+        &.focused {
+            border-color: $input_active;
+        }
+    }
+}
+
+.search-input {
+    margin: 0;
+    display: flex;
+
+    [type="text"] {
+        width: 100%;
+        border: none;
+        display: block;
+        padding-right: 0;
+    }
+
+    [type="submit"] {
+        background: transparent;
+        border: none;
+        min-width: 0;
+        width: auto;
+        max-width: 100%;
+    }
+}
+
+.parsley {
+    &-error {
+        border-color: $input_error !important;
+    }
+
+    &-success {
+        border-color: $input_filled !important;
+    }
+
+    &-errors-list {
+        list-style: none;
+        padding-left: 0;
+        font-size: .9em;
+        display: none;
+        width: 100%;
+
+        &.filled {
+            display: block;
+            margin-top: 0;
+        }
+
+        .select-menu &.filled {
+            position: absolute;
+            margin-top: .5em;
+
+        }
+
+        li {
+            color: $input_error;
+        }
+    }
+}

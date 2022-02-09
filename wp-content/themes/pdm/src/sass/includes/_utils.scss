@@ -1,0 +1,222 @@
+@mixin clearfix() {
+    &:after {
+        content: "";
+        clear: both;
+        display: block;
+    }
+}
+
+@mixin box-shadow($type: undefined) {
+
+    @if $type==undefined {
+        box-shadow: 0 1rem .9rem -4px rgba($black, .05),
+            0 .35rem .5rem -2px rgba($black, .1),
+            0 2px 1rem -.25rem rgba($black, .08);
+        margin-bottom: 2em;
+    }
+
+    @else if $type=='reset' {
+        box-shadow: none;
+    }
+}
+
+@media (max-width: $laptop - 1) {
+    .full-mobile {
+        width: calc(100% + 3rem);
+        margin-left: -1.5rem;
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.desk-only {
+    @media (max-width: $laptop - 1) {
+        display: none !important;
+    }
+}
+
+.mob-only {
+    @media (min-width: $laptop) {
+        display: none !important;
+    }
+}
+
+.accent {
+    color: $link_color !important;
+}
+
+%input {
+    display: inline-block;
+    appearance: none;
+    padding: .75rem;
+    border: $input_border_width solid $input_inactive;
+    background: $input_background;
+    border-radius: $input_border_radius;
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.2;
+    width: 100%;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &.filled {
+        border-color: $input_filled;
+    }
+
+    &:focus {
+        border-color: $input_active;
+    }
+}
+
+%button {
+    background: transparent;
+    border: $input_border_width solid transparent;
+    border-radius: $input_border_radius;
+    color: $black;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    font-family: inherit;
+    font-weight: $bold;
+    padding: 1rem 1.5rem;
+    font-size: .9rem;
+    line-height: 1;
+    margin: 0;
+    text-decoration: none;
+    text-align: center;
+    transition: .16s ease;
+    width: auto;
+
+    .svg-icon {
+        display: inline-block;
+        margin: 0 .5rem;
+        font-size: .8rem;
+    }
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    @media (max-width: $mobile - 1) {
+        width: 100%;
+
+        + #{&} {
+            margin-top: 1rem;
+        }
+
+        + .btn--text {
+            margin-top: .5rem;
+        }
+
+    }
+
+    @media (min-width: $mobile) {
+        + #{&}:not(.btn--text) {
+            margin-left: 1rem;
+        }
+
+        + .btn--text {
+            margin-left: .25rem;
+        }
+    }
+}
+
+%customLists {
+
+    ul,
+    ol {
+        margin: 2rem 0 0 1rem;
+        font-size: inherit;
+
+        li {
+            padding-left: 0.5rem;
+            list-style: none;
+            position: relative;
+            box-sizing: border-box;
+
+            &:before {
+                content: "";
+                display: block;
+                box-sizing: border-box;
+                position: absolute;
+                right: 100%;
+                color: $info;
+                white-space: nowrap;
+            }
+        }
+
+        @media (min-width: $tablet) {
+            margin-left: 1.25rem;
+        }
+    }
+
+    ol:not(.checklist) {
+        counter-reset: ol-counter;
+        margin-left: .75rem;
+
+        li {
+
+            &:before {
+                content: counter(ol-counter);
+                counter-increment: ol-counter;
+                padding-right: 0.25rem;
+                text-align: right;
+                font-weight: bold;
+            }
+        }
+
+        @media (min-width: $tablet) {
+            li {
+                padding-left: 1.75rem;
+
+                &:before {
+                    right: calc(100% - .75rem)
+                }
+            }
+        }
+    }
+
+    ul:not(.checklist) {
+        li {
+            &:before {
+                top: .5rem;
+                bottom: 0px;
+                margin-right: 0.5rem;
+                height: 0;
+                width: 0;
+                border-radius: 50%;
+                border: 3px solid;
+            }
+        }
+
+        @media (min-width: $tablet) {
+            li {
+                padding-left: 1rem;
+
+            }
+        }
+    }
+
+    ul.checklist {
+        list-style: none;
+
+        li {
+            padding-left: 1rem;
+        }
+
+        .svg-icon {
+            position: absolute;
+            top: .3rem;
+            left: -1.25rem;
+            vertical-align: text-top;
+
+            svg {
+                fill: $info;
+            }
+        }
+    }
+}
