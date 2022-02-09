@@ -34,6 +34,10 @@
         margin: 0 auto;
         margin-top: 5vw;
         transform: translateY(500px);
+        color: $white;
+        *{
+            color: inherit;
+        }
     }
     
     @media only screen and (min-width:960px){

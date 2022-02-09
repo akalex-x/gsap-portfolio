@@ -5,6 +5,17 @@ if (window.location.hash) { setTimeout(function () { window.scrollTo(0, 0); }, 2
 jQuery(document).ready(function ($) {
 
     /*-----------------------------------------------------------------------------GLOBAL ON LOAD----*/
+    
+    var grainedOptions = {
+        "animate": true,
+        "patternWidth": 100,
+        "patternHeight": 100,
+        "grainOpacity": 0.04,
+        "grainDensity": 2,
+        "grainWidth": 1.5,
+        "grainHeight": 1.5
+    }
+    grained("#viewport", grainedOptions);
 
     var LazyLoading = (function () {
         var instance = new LazyLoad();
