@@ -13,8 +13,8 @@ html, body {
 }
 
 body {
-    background: $black;
-    color: $white;
+    background: $white;
+    color: $black;
     font-family: $sans;
     line-height: $line-height;
 
@@ -60,6 +60,24 @@ body {
             bottom: 0;
         }
     }
+}
+
+//#viewport {
+//	overflow: hidden;
+//	position: fixed;
+//	height: 100%;
+//	width: 100%;
+//	top: 0;
+//	left: 0;
+//	right: 0;
+//	bottom: 0;
+//}
+
+#scroll-container {
+//	position: absolute;  
+//	overflow: hidden;
+//	width: 100%;
+//	will-change: transform;
 }
 
 section,
@@ -407,4 +425,56 @@ code {
 	path{
 		fill: $white;
 	}
+}
+
+button.reset{
+	appearance:none;
+	background-color: transparent;
+	border: 0;
+	box-shadow: 0;
+	cursor: pointer;
+}
+
+.alt-cursor{
+	position: fixed;
+	z-index: 9;
+	pointer-events: none;
+	.basic{
+//		background: linear-gradient(-45deg, #FC60A8, #AD2831, #2F97C1, #7A28CB);
+		background: linear-gradient(-45deg, #AD2831, #2F97C1, #FC60A8, #7A28CB);
+		background-size: 400% 400%;
+		animation: animatedGradient 15s ease infinite;
+//		animation-delay: 1.75s;
+		border-radius: 50%;
+		width: 50px;
+		height: 50px;
+		clip-path: url('#circle-border');
+	}
+	.portfolio-cursor{
+		visibility: hidden;
+		position: absolute;
+		bottom: -100px;
+		right: -100px;
+		width: 250px;
+		background: transparent;
+		@media only screen and (min-width:960px){
+			width: 450px;
+		}
+		.spacer{
+			width: 100%;
+			padding-bottom: 120%;
+			.positioner,
+			canvas{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+		}
+	}
+}
+
+#viewport{
+    background-color: $black;
 }

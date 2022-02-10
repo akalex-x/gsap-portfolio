@@ -31,7 +31,12 @@
     <?php if(!empty($site_favicon)): ?>
     <link rel="shortcut icon" href="<?php echo $site_favicon['url']; ?>" type="<?php echo $site_favicon['mime_type']; ?>" />
     <?php endif; ?>
+    
     <?php wp_head(); ?>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet"> 
 
     <script>var ajaxURL = "<?php echo esc_url( home_url( '/' ) ) . 'wp-admin/admin-ajax.php' ?>";</script>
     <?php echo get_field('head_scripts', 'option'); ?>
@@ -41,4 +46,5 @@
     <?php echo get_field('body_scripts_top', 'option'); ?>
     <?php include locate_template( 'lib/layout/header.php' ); ?>
 
-    <main>
+   	<div id="viewport">
+    <main id="scroll-container">

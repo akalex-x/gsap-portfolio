@@ -1,0 +1,312 @@
+// Gravity Forms
+
+.ui-datepicker {
+    @include box-shadow;
+    margin: 0;
+    background: $white;
+    z-index: 99;
+    border-radius: .5rem;
+
+    table {
+        margin: 0;
+    }
+
+    .ui-datepicker-title {
+        display: flex;
+        width: calc(100% + 1rem);
+        padding: 0 1rem 1rem;
+        margin: 0 -.5rem;
+
+        select {
+            margin: 0 .5rem;
+            width: 50%;
+        }
+    }
+
+    .ui-datepicker-header {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .ui-datepicker-prev,
+    .ui-datepicker-next {
+        @extend .btn;
+        @extend .btn--text;
+    }
+
+    .ui-datepicker-next {
+        margin-left: auto !important;
+    }
+}
+
+.gform_wrapper {
+
+    .gform_hidden,
+    .gfield_visibility_hidden,
+    .gform_validation_container,
+    .field_sublabel_hidden_label .hidden_sub_label,
+    .hidden_label > label,
+    .hidden_label > legend {
+        display: none;
+    }
+
+    .gfield_description,
+    .ginput_complex label,
+    .gform_fileupload_rules,
+    .ginput_complex > span {
+        display: block;
+    }
+
+    .gfield_label {
+        display: inline-block;
+        margin-bottom: .25rem;
+    }
+
+    form,
+    .gform_footer,
+    .gform_validation_errors + .gform_heading {
+        margin-top: 1.5rem;
+    }
+
+    .gfield_label,
+    .gfield_radio label,
+    .ginput_complex label {
+        color: $black;
+        cursor: pointer;
+    }
+
+    .gfield_price,
+    .gfield_label {
+        font-weight: $bold;
+    }
+
+    .gfield_description,
+    .gfield_consent_label,
+    .gform_fileupload_rules {
+        color: $gray;
+        font-style: italic;
+    }
+
+
+    .gfield_description,
+    .instruction,
+    .ginput_complex label,
+    .gform_fileupload_rules,
+    .gfield_required_asterisk,
+    .gform_required_legend,
+    .gfield_required_text {
+        font-size: .8rem;
+    }
+
+    .gfield_required_asterisk,
+    .gfield_radio label {
+        font-size: 1rem;
+    }
+
+    .instruction,
+    .gfield_description,
+    .ginput_complex label,
+    .gform_fileupload_rules {
+        margin-top: .25rem;
+        margin-left: .25rem;
+        color: $dgray;
+    }
+
+    .gform_body .gfield_required_asterisk,
+    .gform_required_legend,
+    .gfield_required_text {
+        margin-left: .5rem;
+        font-weight: $normal;
+    }
+
+    .gfield,
+    .ginput_complex > span {
+        margin-top: 1.25rem;
+    }
+
+    .validation_message,
+    .gfield_required_text,
+    .gform_submission_error,
+    .gfield_required_asterisk {
+        color: $error;
+    }
+
+    .gform_validation_errors {
+        margin: 1.5rem 0;
+    }
+
+    .gform_submission_error {
+        padding: 1rem;
+        border-radius: .5rem;
+        background: rgba($error, .1);
+        border: 1px solid rgba($error, .5);
+        font-size: .9rem;
+    }
+
+    .gfield_error {
+        input, select {
+            border-color: rgba($error, .75);
+        }
+    }
+
+    // .gfield:first-child {
+    //     margin-top: 0;
+    // }
+
+    .gfield_list_group {
+
+        + .gfield_list_group {
+            margin-top: 1rem;
+        }
+
+        &_item {
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .gfield_list_icons {
+            margin-top: .5rem;
+            display: flex;
+
+            button {
+                width: 50%;
+                padding-left: .75rem;
+                padding-right: .75rem;
+            }
+
+            .delete_list_item {
+                @extend .btn--outline;
+                color: $error;
+                border-color: $error;
+                margin-left: .5rem;
+
+                &:hover {
+                    border-color: transparent;
+                    background: $error;
+                    color: $white;
+                }
+            }
+        }
+    }
+
+    .gform-text-input-reset {
+        border: none;
+        padding: 0;
+    }
+
+    .gfield_total .gfield_label,
+    .ginput_total {
+        font-size: 1.25rem;
+        margin: 0;
+    }
+
+    .gfield_total,
+    .ginput_product_price_wrapper {
+        display: flex;
+    }
+
+    .gfield_total .gfield_label,
+    .ginput_product_price_label {
+        margin-right: 1rem;
+    }
+
+    .ginput_total,
+    .ginput_product_price {
+        font-weight: $bold;
+    }
+
+    .ginput_total {
+        color: $success;
+    }
+
+
+
+    @media (max-width: $tablet - 1) {
+        .ginput_complex > span:first-child {
+            margin-top: 0;
+        }
+    }
+
+    @media (min-width: $tablet) {
+
+        .gfield,
+        .ginput_complex > span,
+        .ginput_complex > .ginput_container_date,
+        .ginput_full {
+            width: calc(100% - 1rem);
+            flex-grow: 1;
+            margin: .5rem;
+        }
+
+        .ginput_complex > span {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .gfield--width-three-quarter {
+            width: calc(75% - 1rem);
+        }
+
+        .gfield--width-two-thirds {
+            width: calc(66.66% - 1rem);
+        }
+
+        .gfield--width-seven-twelfths {
+            width: calc(58.33% - 1rem);
+        }
+
+        .ginput_complex .ginput_left,
+        .ginput_complex .ginput_right,
+        .gfield--width-half,
+        .gf_name_has_2 > span {
+            width: calc(50% - 1rem);
+        }
+
+        .gfield--width-five-twelfths {
+            width: calc(41.66% - 1rem);
+        }
+
+        .gf_name_has_3 > span,
+        .ginput_complex > .ginput_container_date,
+        .gfield--width-third {
+            width: calc(33.33% - 1rem);
+        }
+
+        .gf_name_has_4 > span,
+        .gfield--width-quarter {
+            width: calc(25% - 1rem);
+        }
+
+        .gf_name_has_5 > span {
+            width: calc(20% - 1rem);
+        }
+
+        .ginput_complex .name_prefix {
+            width: auto;
+        }
+
+        .gfield_list_group {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+
+            .gfield_list_icons {
+                margin-top: 0;
+                margin-left: 1rem;
+                flex: none;
+
+                button {
+                    width: auto;
+                }
+            }
+        }
+
+        .ginput_complex,
+        .gform_fields {
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin: 0 -.5rem;
+        }
+    }
+}

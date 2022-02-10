@@ -1,0 +1,57 @@
+.video-zoom{
+    padding: 10vw 0;
+    min-height: 100vh;
+    &__wrap{
+        position: relative;
+        width: 85vw;
+        margin: 0 auto;
+        transform: scale(5);
+        img{
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: auto;
+        }
+        &__positioner{
+            z-index: 1;
+            position: absolute;
+            top: 1%;
+            left: 0;
+            width: 100%;
+            height: 98%;
+            overflow: hidden;
+            border-radius: 7vw;
+            video{
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+    
+    &__content{
+        width: 85vw;
+        margin: 0 auto;
+        margin-top: 5vw;
+        transform: translateY(500px);
+        color: $white;
+        *{
+            color: inherit;
+        }
+    }
+    
+    @media only screen and (min-width:960px){
+        padding: 6vw 0;
+        &__wrap{
+            width: 60%;
+        }
+        &__content{
+            width: 60%;
+            margin-top: 2.5vw;
+            h2{
+                font-size: 7em;
+            }
+        }
+    }
+    
+}

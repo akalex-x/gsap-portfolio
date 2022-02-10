@@ -6,18 +6,33 @@ jQuery(document).ready(function ($) {
 
     /*-----------------------------------------------------------------------------GLOBAL ON LOAD----*/
     
-    var grainedOptions = {
-        "animate": true,
-        "patternWidth": 100,
-        "patternHeight": 100,
-        "grainOpacity": 0.04,
-        "grainDensity": 2,
-        "grainWidth": 1.5,
-        "grainHeight": 1.5
-    }
-    grained("#viewport", grainedOptions);
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+    
+    var grainyBackground = (function(){
+        var grainedOptions = {
+            "animate": true,
+            "patternWidth": 100,
+            "patternHeight": 100,
+            "grainOpacity": 0.04,
+            "grainDensity": 2,
+            "grainWidth": 1.5,
+            "grainHeight": 1.5
+        }
+        var grainedOptions2 = {
+            "animate": true,
+            "patternWidth": 100,
+            "patternHeight": 100,
+            "grainOpacity": 0.1,
+            "grainDensity": 2,
+            "grainWidth": 2,
+            "grainHeight": 2
+        }
+        grained("#viewport", grainedOptions);
+        grained("#grainy-vid", grainedOptions2);
+    }()); 
 
     var LazyLoading = (function () {
+        
         var instance = new LazyLoad();
 
         function lazyBGImages() {
@@ -39,6 +54,7 @@ jQuery(document).ready(function ($) {
         return {
             update: update
         }
+        
     }());
 
     //Global function to toggle simple accordions
@@ -480,181 +496,79 @@ jQuery(document).ready(function ($) {
 	
 	var homeHero = (function(){
 		
-		var mtl = gsap.timeline({
-			paused:true,
-			repeat:false,
-			defaults: {
-				duration: 1.5,
-			},
-			onComplete: function(){
-				$('.home-hero').addClass('ani-complete');
-			}
-		});
-
-		mtl.to('.home-hero__bg__left',{
-			height:'00%',
-			delay: .6,
-			ease: Power2.easeInOut,
-		}, 'start');
-
-		mtl.to('.home-hero__bg__right',{
-			height:'100%',
-			delay: .8,
-			ease: Power2.easeInOut,
-		}, 'start');
-
-		mtl.to('.home-hero__video',{
-			clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+        var mtl = gsap.timeline({
+//            paused:true,
+            repeat:false,
+            defaults: {
+                duration: 1,
+            }
+        });
+        
+        mtl.to('.centered-hero__content',{
+            opacity:1,
 			ease: Power2.easeInOut,
 		});
-		
-		mtl.to('.home-hero__content',{
-			delay: 1.1,
-			x: 0,
+        
+        mtl.to('.centered-hero__reveal',{
+            opacity:1,
+            deration:.5,
 			ease: Power2.easeInOut,
-		}, 'start');
-		
-		var dtl = gsap.timeline({
-			paused:true,
-			repeat:false,
-			defaults: {
-				duration: 2,
-			},
-			onComplete: function(){
-				$('.home-hero').addClass('ani-complete');
-			}
-		});
+		},'reveal');
+        
+        mtl.to('.centered-hero__reveal',{
+            width:'100%',
+            delay:.25,
+			ease: Power2.easeInOut,
+		},'reveal');
+        
+        mtl.to('.centered-hero__reveal',{
+            height:'100%',
+			ease: Power2.easeInOut,
+		},'reveal2');
+        
+        mtl.to('.centered-hero__video .spacer',{
+            delay:.2,
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+			ease: Power2.easeInOut,
+		},'reveal2');
+        
+        var video3D = (function(){
+            
+            var request = null;
+            var mouse = { x: 0, y: 0 };
+            var cx = window.innerWidth / 2;
+            var cy = window.innerHeight / 2;
 
-		dtl.to('.home-hero__bg__left',{
-			width:'20%',
-			delay: .6,
-			ease: Power2.easeInOut,
-		}, 'start');
+            $('body').mousemove(function(event) {
 
-		dtl.to('.home-hero__bg__right',{
-			width:'80%',
-			delay: .8,
-			ease: Power2.easeInOut,
-		}, 'start');
-		
-		dtl.to('.home-hero__video',{
-			delay: 1.5,
-			clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
-			ease: Power2.easeInOut,
-		}, 'start');
-		
-		dtl.to('.home-hero__content',{
-			delay: .6,
-			x: 0,
-			ease: Power2.easeInOut,
-		}, 'start');
-		
-		dtl.to('.other-content',{
-			delay: .6,
-			x: '40%',
-			opacity: 1,
-			ease: Power2.easeInOut,
-		}, 'start');
-		
-		if (desktopQuery.matches) {
-			dtl.play();
-		}else{
-			mtl.play();
-		}
+                mouse.x = event.pageX;
+                mouse.y = event.pageY;
+
+                cancelAnimationFrame(request);
+                request = requestAnimationFrame(update);	
+            });
+
+            function update() {
+                dx = mouse.x - cx;
+                dy = mouse.y - cy;
+                tiltx = (dy / cy);
+                tilty = - (dx / cx);
+                radius = Math.sqrt(Math.pow(tiltx,2) + Math.pow(tilty,2));
+                degree = (radius * 30);
+                gsap.to(".centered-hero__video", 1, {transform:'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)', ease:Power2.easeOut});
+            }
+	
+            $(window).resize(function() {
+                cx = window.innerWidth / 2;
+                cy = window.innerHeight / 2;
+            });	
+            
+        }());
 		
 	}());
 	
-	var homePortfolio = (function(){
 	
-		$('.marquee__wrapper').each(function(){
-			var clone = $(this).html();
-			$(this).append(clone).append(clone);
-		});
-
-		$('.marquee__wrapper').marquee({
-			duration: 10000,
-			gap: 50,
-			delayBeforeStart: 0,
-			direction: 'left',
-			duplicated: true,
-			startVisible: true,
-		});
-		
-		
-		$('.portfolio__items').mouseenter(function(){
-			$('.alt-cursor .basic').hide();
-			$('.alt-cursor .portfolio-cursor').css('visibility', 'visible');
-		});
-		
-		$('.portfolio__items').mouseleave(function(){
-			$('.alt-cursor .portfolio-cursor').css('visibility', 'hidden');
-			$('.alt-cursor .basic').show();
-		});
-		
-		var $portfolios = $('.portfolio__items li');
-		
-		var currentImage;
-
-		$portfolios.mouseleave(function() {
-			$('.portfolio__images .hover').removeClass('hover');
-		});
-		
-		$portfolios.mouseenter(function() {
-			
-			var hoverImage = $(this).data('image');
-			var hoverScreen = $(this).data('screen');
-			
-			if( $('.portfolio__images .'+hoverScreen).length ){
-				$('.portfolio__images .'+hoverScreen).parent().addClass('hover');
-			}
-			
-			if( hoverImage == currentImage ){ return; }
-			
-			currentImage = hoverImage;
-			
-			if( $('.alt-cursor .portfolio-cursor canvas').length ){
-				
-				var removeEl = $('.alt-cursor .portfolio-cursor canvas');
-				
-				var currentPort = new hoverEffect({
-					parent: document.querySelector('.alt-cursor .portfolio-cursor .positioner'),
-					intensity: 0.2,
-					image1: currentImage,
-					image2: hoverImage,
-					displacementImage: 'https://powerdigitalmarketing.com/wp-content/uploads/2021/12/diss.png',
-					imagesRatio: 683 / 1024,
-					hover:false,
-				});
-				
-				setTimeout(function() {
-					removeEl.remove();
-					currentPort.next();
-				}, 100);
-				
-			}else{
-				
-				new hoverEffect({
-					parent: document.querySelector('.alt-cursor .portfolio-cursor .positioner'),
-					intensity: 0.2,
-					image1: hoverImage,
-					image2: hoverImage,
-					displacementImage: 'https://powerdigitalmarketing.com/wp-content/uploads/2021/12/diss.png',
-					imagesRatio: 683 / 1024,
-					hover:false,
-				});
-				
-			}
-
-
-		});
-		
-	}());
-	
-
-	
-	var smoothScroll2 = (function () {
-
-		gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+	var smoothScroll = (function () {
 
 		var $container = $("#scroll-container");
 		
@@ -665,47 +579,6 @@ jQuery(document).ready(function ($) {
 		}
 		
 		smoothScroll($container);
-		
-		ScrollTrigger.create({
-			trigger: $('.home-hero'),
-			pin: true,
-			start: "top top",
-			end: "+=600",
-//			onLeave: function(){ goToSection($('.portfolio')) }
-			onLeave: function(){ goToSection($('.portfolio')) }
-		});
-		
-		ScrollTrigger.create({
-			trigger: $('.video-zoom'),
-			pin: true,
-			start: "top top",
-			end: "+=100",
-		});
-        
-        var videoZoom = (function(){
-
-            gsap.to('.video-zoom__wrap',{
-                scale: 1,
-                duration: 1,
-                scrollTrigger: {
-                    start: "top top",
-                    trigger: '.video-zoom',
-                    toggleActions: "restart none reverse reverse"
-                }
-            });
-
-            gsap.to('.video-zoom__content',{
-                y: 1,
-                duration: 1,
-                delay:.25,
-                scrollTrigger: {
-                    start: "top top",
-                    trigger: '.video-zoom',
-                    toggleActions: "restart none reverse reverse"
-                }
-            });
-            
-        }());
 		
 		$('.next-section-trigger').click(function(){
 			
@@ -727,33 +600,6 @@ jQuery(document).ready(function ($) {
 		});
 		
 	}());
-	
-
-	var $els = $(".portfolio__images li"),
-		boxWidth = $els.outerWidth(),
-		totalWidth = boxWidth * $els.length,
-		time = 30,
-		dirFromLeft = "+=" + totalWidth,
-		dirFromRight = "-=" + totalWidth;
-
-	var mod = gsap.utils.wrap(0, totalWidth);
-
-	gsap.set($els, {
-		x: function x(i) {
-			return i * boxWidth;
-		}
-	});
-
-	var action = gsap.timeline().to($els, {
-		x: dirFromLeft,
-		modifiers: {
-			x: function x(_x) {
-				return mod(parseFloat(_x)) + "px";
-			}
-		},
-		duration: time, ease: 'none',
-		repeat: -1
-	});
 	
 	var resizeEvent = window.document.createEvent('UIEvents'); 
 	resizeEvent.initUIEvent('resize', true, false, window, 0); 

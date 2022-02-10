@@ -1,0 +1,410 @@
+@import '../includes/fonts';
+@import '../includes/variables';
+@import '../includes/utils';
+@import '../includes/lightbox';
+
+
+html, body {
+    font-size: 15px;
+
+    @media (min-width: $mobile) {
+        font-size: 16px;
+    }
+}
+
+body {
+    background: $black;
+    color: $white;
+    font-family: $sans;
+    line-height: $line-height;
+
+    * {
+        font-feature-settings: "liga";
+        box-sizing: border-box;
+
+        &:focus {
+            outline: 0;
+            box-shadow: 0;
+        }
+    }
+
+    &.blur {
+        header, footer, section {
+            filter: blur(4px);
+        }
+    }
+
+    &.overlay {
+        &:before {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            background-color: rgba(0, 0, 0, .75);
+        }
+    }
+
+    &.no-scroll {
+        overflow: hidden;
+        height: 100vh;
+
+        @supports (-webkit-overflow-scrolling:touch) {
+            height: 100%;
+            width: 100%;
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+}
+
+section,
+.section {
+    padding: 3rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    &.section-bg {
+        padding: 6rem 1.5rem;
+    }
+
+    &:not(.section-bg) + .section-bg {
+        margin-top: 3rem;
+    }
+
+    &.section-bg + &:not(.section-bg) {
+        margin-top: 3rem;
+    }
+
+    @media (min-width:$laptop) {
+        padding: 6rem 3rem;
+
+        &.section-bg {
+            padding: 9rem 3rem;
+        }
+
+        &:not(.section-bg) + .section-bg,
+        &.section-bg + &:not(.section-bg) {
+            margin-top: 6rem;
+        }
+    }
+
+    &.margin-top-desk {
+        @media only screen and (min-width:$laptop) {
+            margin-top: 3rem;
+        }
+    }
+
+    &.margin-bottom-desk {
+        @media only screen and (min-width:$laptop) {
+            margin-bottom: 3rem;
+        }
+    }
+
+    &.margin-top-mob {
+        @media only screen and (max-width:$laptop - 1) {
+            margin-top: 1.5rem;
+        }
+    }
+
+    &.margin-bottom-mob {
+        @media only screen and (max-width:$laptop - 1) {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    &.nopad-top {
+        padding-top: 0;
+    }
+
+    &.nopad-bottom {
+        padding-bottom: 0;
+    }
+
+    &.nopad-top-mob {
+        @media only screen and (max-width:$laptop - 1) {
+            padding-top: 0;
+        }
+    }
+
+    &.nopad-bottom-mob {
+        @media only screen and (max-width:$laptop - 1) {
+            padding-bottom: 0;
+        }
+    }
+
+    &.nopad-top-desk {
+        @media only screen and (min-width:$laptop) {
+            padding-top: 0rem;
+        }
+    }
+
+    &.nopad-bottom-desk {
+        @media only screen and (min-width:$laptop) {
+            padding-bottom: 0rem;
+        }
+    }
+
+}
+
+.container {
+    max-width: $container_sm;
+    margin: 0 auto;
+
+    @media (min-width:$laptop) {
+        max-width: $container;
+
+        &--small {
+            max-width: $container_sm;
+        }
+
+        &--medium {
+            max-width: $container_md;
+        }
+
+        &--large {
+            max-width: $container_lg;
+        }
+    }
+
+}
+
+main {
+    @extend %customLists;
+
+    blockquote {
+        font-size: 1.25rem;
+        position: relative;
+
+        cite {
+            font-size: .9rem;
+        }
+
+        @media (min-width: $tablet) {
+            font-size: 1.5rem;
+        }
+    }
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+    color: $heading_color;
+    font-family: $heading_font;
+    font-weight: $heading_weight;
+    line-height: 1.2;
+    margin: 0;
+
+    * + & {
+        margin-top: 1rem;
+    }
+
+    & + &,
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+h1, .h1 {
+    font-size: $heading_h1__mobile;
+
+    @media (min-width: $laptop) {
+        font-size: $heading_h1;
+    }
+
+}
+
+h2, .h2 {
+    font-size: $heading_h2__mobile;
+
+    @media (min-width: $laptop) {
+        font-size: $heading_h2;
+    }
+}
+
+h3, .h3 {
+    font-size: $heading_h3__mobile;
+
+    @media (min-width: $laptop) {
+        font-size: $heading_h3;
+    }
+}
+
+h4, .h4 {
+    font-size: $heading_h4__mobile;
+
+    @media (min-width: $laptop) {
+        font-size: $heading_h4;
+    }
+}
+
+h5, .h5 {
+    font-size: $heading_h5__mobile;
+
+    @media (min-width: $laptop) {
+        font-size: $heading_h5;
+    }
+}
+
+h6, .h6 {
+    font-size: $heading_h6__mobile;
+}
+
+.subheading {
+    font-size: .9rem;
+}
+
+a {
+    color: $link_color;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.btn {
+    @extend %button;
+    background: $black;
+    color: $white;
+
+    &--text {
+        background: transparent;
+        color: $black;
+
+        &:hover {
+            text-decoration: underline;
+            background: transparent;
+        }
+    }
+
+    &--outline {
+        background: transparent;
+        color: $black;
+        border-color: $black;
+
+        &:hover {
+            border-color: transparent;
+            background: $black;
+            color: $white;
+        }
+    }
+}
+
+.video-embed {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    margin: auto;
+    padding-bottom: 56.5%;
+    background: $black;
+
+    &__cover, &__embed, iframe, video {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: 100%;
+        width: 100%;
+    }
+
+    &__cover {
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        cursor: pointer;
+    }
+
+    &__cover:hover &__play {
+        transform: scale(1.1);
+    }
+
+    &__play {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform .2s ease;
+
+
+        span {
+            @extend .h6;
+            color: $white;
+            font-weight: $thick;
+            margin-top: 1.5rem;
+        }
+    }
+}
+
+
+.social-links ul {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        margin: 0;
+
+        + li {
+            margin-left: 1rem;
+        }
+    }
+
+    .svg-icon path {
+        fill: $white;
+    }
+
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+
+            .svg-icon path {
+                fill: $white;
+            }
+        }
+    }
+}
+
+
+code {
+    background: $xlgray;
+    word-wrap: break-word;
+    box-decoration-break: clone;
+    padding: .1rem .3rem .1rem;
+    border-radius: .15rem;
+}
+
+.site-logo {
+    display: inline-block;
+
+    svg, img {
+        vertical-align: middle;
+        max-height: 5rem;
+    }
+}
+
+.svg-icon--alex-kinejara-home-morph-clip,
+.svg-icon--alex-kinejara-home-morph{
+	width: 100%;
+	height: 0;
+	padding-bottom: 92%;
+	path{
+		fill: $white;
+	}
+}

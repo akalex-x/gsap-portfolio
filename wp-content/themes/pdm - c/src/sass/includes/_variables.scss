@@ -1,0 +1,92 @@
+//----------------------------------------------
+//* COLORS
+//---------------------------------------------
+// Base Colors
+$black: #0c0c0c;
+$xdgray: #202125;
+$dgray: #808285;
+$gray: #999;
+$lgray: #ddd;
+$xlgray: #eaeaea;
+$xxlgray: #f4f4f4;
+$white: #fff;
+
+// State Colors
+$error: #EF475E;
+$warning: #FFD166;
+$info: #4292E3;
+$success: #06D6A0;
+
+// Social Colors
+$facebook: #3b5998;
+$twitter: #1da1f2;
+$linkedin : #007bb5;
+$vimeo: #1ab7ea;
+$youtube: #f00;
+$pinterest: #bd081c;
+$yelp: #d32323;
+
+// Theme Colors
+
+
+//----------------------------------------------
+//* Forms
+//---------------------------------------------
+$input_border_width: 2px;
+$input_border_radius: 4px;
+$input_inactive: $xlgray;
+$input_active: $info;
+$input_filled: $black;
+$input_error: $error;
+$input_background: $white;
+
+//----------------------------------------------
+//* LAYOUTS
+//---------------------------------------------
+$container_sm: 625px;
+$container_md: 960px;
+$container: 1200px;
+$container_lg: 1400px;
+
+$mobile: 450px;
+$tablet: 720px;
+$laptop: 960px;
+$desktop: 1200px;
+$desktop_lg: 1400px;
+
+//----------------------------------------------
+//* TYPOGRAPHY
+//---------------------------------------------
+// Fonts
+$serif: Times, serif;
+$sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+$line-height: 1.5;
+
+$thin: 300;
+$normal: 400;
+$semibold: 500;
+$bold: 600;
+$thick: 900;
+
+// Links
+$link_color: $info;
+
+// Headings
+$heading_color: $black;
+$heading_font: $sans;
+$heading_weight: $bold;
+
+$heading_h1: 3rem;
+$heading_h2: 2.25rem;
+$heading_h3: 2rem;
+$heading_h4: 1.5rem;
+$heading_h5: 1rem;
+$heading_h6: .875rem;
+
+$heading_h1__mobile: 2.25rem;
+$heading_h2__mobile: 1.875rem;
+$heading_h3__mobile: 1.5rem;
+$heading_h4__mobile: 1.25rem;
+$heading_h5__mobile: 1rem;
+$heading_h6__mobile: .9rem;

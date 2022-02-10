@@ -2,14 +2,20 @@
 //* COLORS
 //---------------------------------------------
 // Base Colors
+//$black: #000;
 $black: #0c0c0c;
+$nblack: #0f0f0f;
+//$white: #FFF;
+$white: #FBFEF9;
+$blue: #2F97C1;
+$red: #AD2831;
+
 $xdgray: #202125;
 $dgray: #808285;
 $gray: #999;
 $lgray: #ddd;
 $xlgray: #eaeaea;
 $xxlgray: #f4f4f4;
-$white: #fff;
 
 // State Colors
 $error: #EF475E;
@@ -58,8 +64,11 @@ $desktop_lg: 1400px;
 //* TYPOGRAPHY
 //---------------------------------------------
 // Fonts
-$serif: Times, serif;
+$serif: 'Playfair Display', Times, serif;
+
 $sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+$display: 'Steelfish Rg', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 $line-height: 1.5;
 
@@ -85,7 +94,7 @@ $heading_h5: 1rem;
 $heading_h6: .875rem;
 
 $heading_h1__mobile: 2.25rem;
-$heading_h2__mobile: 1.875rem;
+$heading_h2__mobile: 2rem;
 $heading_h3__mobile: 1.5rem;
 $heading_h4__mobile: 1.25rem;
 $heading_h5__mobile: 1rem;
