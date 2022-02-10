@@ -49,16 +49,17 @@
         opacity: 0;
         h1{
             color: $white;
-            font-size: 15vw;
+            font-size: 9vw;
             text-transform: uppercase;
             left: .1em;
             font-family: $display;
             span{
-                color: transparent;
-                text-stroke-color: #fbfef9;
-                -webkit-text-stroke-color: #fbfef9;
-                text-stroke-width: .02em;
-                -webkit-text-stroke-width: .02em;
+                font-family: $serif;
+//                color: transparent;
+//                text-stroke-color: #fbfef9;
+//                -webkit-text-stroke-color: #fbfef9;
+//                text-stroke-width: .02em;
+//                -webkit-text-stroke-width: .02em;
             }
         }
     }
@@ -66,15 +67,15 @@
     @media only screen and (min-width:960px){
         
         &__video{
-            height: 90%;
-            top: 10%;
+            height: 86%;
+            top: 8%;
             width: 35%;
         }
         
         &__content{
-            max-width: 40vw;
+            max-width: 55vw;
             h1{
-                font-size: 7.5vw;
+                font-size: 5.5vw;
             }
         }
         

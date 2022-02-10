@@ -67,11 +67,11 @@ $desktop_lg: 1400px;
 //* TYPOGRAPHY
 //---------------------------------------------
 // Fonts
-$serif: 'Playfair Display', Times, serif;
+$serif: 'Bigilla', Times, serif;
 
-$sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$sans: 'Neue Metana', Helvetica, Arial, sans-serif;
 
-$display: 'Steelfish Rg', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$display: 'Neue Metana', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 $line-height: 1.5;
 
@@ -87,7 +87,7 @@ $link_color: $info;
 // Headings
 $heading_color: $black;
 $heading_font: $sans;
-$heading_weight: $bold;
+$heading_weight: 'normal';
 
 $heading_h1: 3rem;
 $heading_h2: 2.25rem;

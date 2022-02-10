@@ -14,7 +14,7 @@
     </div>
     
     <div class="centered-hero__content">
-        <h1>Taylored <span>digital experiences</span> for your brand.</h1>
+        <h1>Tailored digital <span>experiences</span> for your brand.</h1>
     </div>
     
     

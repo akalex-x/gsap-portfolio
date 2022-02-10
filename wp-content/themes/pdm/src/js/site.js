@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
             "animate": true,
             "patternWidth": 100,
             "patternHeight": 100,
-            "grainOpacity": 0.04,
+            "grainOpacity": 0.1,
             "grainDensity": 2,
             "grainWidth": 1.5,
             "grainHeight": 1.5
@@ -28,7 +28,7 @@ jQuery(document).ready(function ($) {
             "grainHeight": 2
         }
         grained("#viewport", grainedOptions);
-        grained("#grainy-vid", grainedOptions2);
+//        grained("#grainy-vid", grainedOptions2);
     }()); 
 
     var LazyLoading = (function () {
@@ -506,6 +506,7 @@ jQuery(document).ready(function ($) {
         
         mtl.to('.centered-hero__content',{
             opacity:1,
+            duration: 2,
 			ease: Power2.easeInOut,
 		});
         

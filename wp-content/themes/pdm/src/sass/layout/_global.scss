@@ -441,11 +441,12 @@ button.reset{
 	pointer-events: none;
 	.basic{
 //		background: linear-gradient(-45deg, #FC60A8, #AD2831, #2F97C1, #7A28CB);
-		background: linear-gradient(-45deg, #AD2831, #2F97C1, #FC60A8, #7A28CB);
-		background-size: 400% 400%;
-		animation: animatedGradient 15s ease infinite;
+//		background: linear-gradient(-45deg, #AD2831, #2F97C1, #FC60A8, #7A28CB);
+//		background-size: 400% 400%;
+//		animation: animatedGradient 15s ease infinite;
 //		animation-delay: 1.75s;
 		border-radius: 50%;
+        background: $primary;
 		width: 50px;
 		height: 50px;
 		clip-path: url('#circle-border');
