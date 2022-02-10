@@ -609,38 +609,38 @@ jQuery(document).ready(function ($) {
 	}());
 	
 	
-	var smoothScroll = (function () {
-
-		var $container = $("#scroll-container");
-		
-		function goToSection(section) {
-			var offset = gsap.getProperty($container[0], "y");
-			var nextPosition = section[0].getBoundingClientRect().top - offset;
-			gsap.to(window, { scrollTo: nextPosition, ease: "power4",  overwrite: true}) ;
-		}
-		
-		smoothScroll($container);
-		
-		$('.next-section-trigger').click(function(){
-			
-			var $this = $(this);
-			var $parent;
-			
-			if( $this.closest('.pin-spacer').length ){
-				$parent = $(this).closest('.pin-spacer');
-			}else{
-				$parent = $(this).closest('section');
-			}
-			
-			var $nextSection = $parent.next();
-			var offset = gsap.getProperty($container[0], "y");
-			var nextPosition = $nextSection[0].getBoundingClientRect().top - offset;
-			
-			gsap.to(window, { scrollTo: nextPosition, ease: "power4", overwrite: true });
-			
-		});
-		
-	}());
+//	var smoothScroll = (function () {
+//
+//		var $container = $("#scroll-container");
+//		
+//		function goToSection(section) {
+//			var offset = gsap.getProperty($container[0], "y");
+//			var nextPosition = section[0].getBoundingClientRect().top - offset;
+//			gsap.to(window, { scrollTo: nextPosition, ease: "power4",  overwrite: true}) ;
+//		}
+//		
+//		smoothScroll($container);
+//		
+//		$('.next-section-trigger').click(function(){
+//			
+//			var $this = $(this);
+//			var $parent;
+//			
+//			if( $this.closest('.pin-spacer').length ){
+//				$parent = $(this).closest('.pin-spacer');
+//			}else{
+//				$parent = $(this).closest('section');
+//			}
+//			
+//			var $nextSection = $parent.next();
+//			var offset = gsap.getProperty($container[0], "y");
+//			var nextPosition = $nextSection[0].getBoundingClientRect().top - offset;
+//			
+//			gsap.to(window, { scrollTo: nextPosition, ease: "power4", overwrite: true });
+//			
+//		});
+//		
+//	}());
 	
 	var resizeEvent = window.document.createEvent('UIEvents'); 
 	resizeEvent.initUIEvent('resize', true, false, window, 0); 
