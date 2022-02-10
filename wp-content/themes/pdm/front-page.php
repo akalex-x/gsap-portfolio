@@ -8,7 +8,7 @@
         <div id="grainy-vid"></div>
         <div class="spacer">
             <video class="lazy" autoplay="" muted="" playsinline="" loop="">
-                <source type="video/mp4" data-src="http://portfolio.dev.cc/wp-content/uploads/2022/01/final_61d90728413189014339df60_141433.mp4">
+                <source type="video/mp4" data-src="/wp-content/uploads/2022/01/final_61d90728413189014339df60_141433.mp4">
             </video>
         </div>
     </div>
