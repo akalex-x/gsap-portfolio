@@ -52,6 +52,7 @@
             font-size: 7.5vw;
             text-transform: uppercase;
             left: .1em;
+            line-height: 1;
             font-family: $display;
             .curtain{
                 display: inline-block;
@@ -59,9 +60,12 @@
                 .word{
                     display: block;
                     transform: translateY(100%);
+                    opacity: 0;
                 }
                 .serif{
                     font-family: $serif;
+                    position: relative;
+                    top: -.075em;
                 }
 //                opacity: 0;
 //                color: transparent;
