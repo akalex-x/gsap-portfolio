@@ -46,15 +46,24 @@
         position: relative;
         z-index: 3;
         text-align: center;
-        opacity: 0;
+//        opacity: 0;
         h1{
             color: $white;
-            font-size: 8vw;
+            font-size: 7.5vw;
             text-transform: uppercase;
             left: .1em;
             font-family: $display;
-            span{
-                font-family: $serif;
+            .curtain{
+                display: inline-block;
+                overflow: hidden;
+                .word{
+                    display: block;
+                    transform: translateY(100%);
+                }
+                .serif{
+                    font-family: $serif;
+                }
+//                opacity: 0;
 //                color: transparent;
 //                text-stroke-color: #fbfef9;
 //                -webkit-text-stroke-color: #fbfef9;
@@ -75,7 +84,7 @@
         &__content{
             max-width: 55vw;
             h1{
-                font-size: 5.5vw;
+                font-size: 5.25vw;
             }
         }
         

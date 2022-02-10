@@ -11,18 +11,18 @@ jQuery(document).ready(function ($) {
     var grainyBackground = (function(){
         var grainedOptions = {
             "animate": true,
-            "patternWidth": 100,
-            "patternHeight": 100,
-            "grainOpacity": 0.1,
+            "patternWidth": 400,
+            "patternHeight": 400,
+            "grainOpacity": 0.09,
             "grainDensity": 2,
-            "grainWidth": 1.5,
-            "grainHeight": 1.5
+            "grainWidth": 2,
+            "grainHeight": 2
         }
         var grainedOptions2 = {
             "animate": true,
             "patternWidth": 100,
             "patternHeight": 100,
-            "grainOpacity": 0.1,
+            "grainOpacity": 0.09,
             "grainDensity": 2,
             "grainWidth": 2,
             "grainHeight": 2
@@ -495,6 +495,44 @@ jQuery(document).ready(function ($) {
 	}());
 	
 	var homeHero = (function(){
+        
+        var $el = $('.centered-hero__content h1');
+        var sentence = $el.text();
+        var words = sentence.split(' ');
+        var spanWords = [];
+
+//        $(words).each(function (i, word) {
+//            if ($.trim(word).length) {
+//                
+//                word = word;
+//                var span = $('<span class="curtain">');
+//                span.append('<span class="word>');
+//                
+//                if( i == 2 ){
+//                    span.find('.word').addClass('serif');
+//                }
+//                
+//                span.find('.word').text(word).prepend('\xA0');
+//                spanWords.push(span)
+//                
+//            }
+//        });
+        
+        $(words).each(function (i, word) {
+            if ($.trim(word).length) {
+                word = word;
+                var span = $('<span class="curtain">');
+                span.append($('<span class="word">'));
+                span.find('.word').text(word).prepend('\xA0');
+                if( i == 2 ){
+                    span.find('.word').addClass('serif');
+                }
+                spanWords.push(span)
+            }
+        });
+        
+
+        $el.html(spanWords)
 		
         var mtl = gsap.timeline({
 //            paused:true,
@@ -504,9 +542,11 @@ jQuery(document).ready(function ($) {
             }
         });
         
-        mtl.to('.centered-hero__content',{
+        mtl.to('.centered-hero__content .word',{
+            y:0,
             opacity:1,
-            duration: 2,
+            duration: 1,
+            stagger:.15,
 			ease: Power2.easeInOut,
 		});
         
