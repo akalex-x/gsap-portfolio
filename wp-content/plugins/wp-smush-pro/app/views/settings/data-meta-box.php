@@ -40,7 +40,7 @@ if ( ! defined( 'WPINC' ) ) {
 					esc_html__( 'Navigate to %1$sTools%2$s to begin the process.', 'wp-smushit' ),
 					'<a href="' . esc_url( esc_url( network_admin_url( 'admin.php?page=smush-tools' ) ) ) . '">',
 					'</a>'
-				);
+				);	 			  	 		  	 						
 				?>
 			</span>
 		<?php endif; ?>

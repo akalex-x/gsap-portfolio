@@ -553,7 +553,7 @@ class Core extends Stats {
 			return false;
 		}
 
-		if ( ! Settings::get_instance()->get( 'resize' ) ) {
+		if ( ! $this->mod->resize->is_active() ) {
 			return $threshold;
 		}
 

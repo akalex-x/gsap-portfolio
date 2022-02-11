@@ -17,6 +17,7 @@ use RecursiveIteratorIterator;
 use Smush\Core\Core;
 use Smush\Core\Installer;
 use Smush\Core\Settings;
+use Smush\Core\Helper;
 use WP_Error;
 use WP_Smush;
 
@@ -345,6 +346,10 @@ class Dir extends Abstract_Module {
 	 * Create the Smush image table to store the paths of scanned images, and stats
 	 */
 	public function create_table() {
+		// If table is already created, returns.
+		if ( self::table_exist() ) {
+			return;
+		}
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
@@ -364,7 +369,7 @@ class Dir extends Abstract_Module {
 		 *                  are from latest scan only and not the whole list from db
 		 * meta       -> For any future use
 		 */
-		$sql = "CREATE TABLE {$wpdb->base_prefix}smush_dir_images (
+		$sql = "CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}smush_dir_images (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			path text NOT NULL,
 			path_hash CHAR(32),
@@ -383,10 +388,17 @@ class Dir extends Abstract_Module {
 
 		// Include the upgrade library to initialize a table.
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		/**
+		 * PHP 8.1 trigger an error when calling query "DESCRIBE {$table};" if the table doesn't exists.
+		 * Since we only create table when it doesn't exists, so don't need to use dbDelta for this case.
+		 */
+		// Hide errors.
+		$wpdb->hide_errors();
+		// Create table.
+		$wpdb->query( $sql );//phpcs:ignore
 
 		// Set flag.
-		self::$table_exist = true;
+		self::$table_exist = self::table_exist( true );
 	}
 
 	/**
@@ -401,7 +413,7 @@ class Dir extends Abstract_Module {
 
 		// Return image ids.
 		if ( is_wp_error( $results ) ) {
-			error_log( sprintf( 'WP Smush Query Error in %s at %s: %s', __FILE__, __LINE__, $results->get_error_message() ) );
+			Helper::logger()->dir()->error( sprintf( 'Query error: %s', $results->get_error_message() ) );
 			$results = array();
 		}
 
@@ -431,7 +443,7 @@ class Dir extends Abstract_Module {
 
 		// Return image ids.
 		if ( is_wp_error( $results ) ) {
-			error_log( sprintf( 'WP Smush Query Error in %s at %s: %s', __FILE__, __LINE__, $results->get_error_message() ) );
+			Helper::logger()->dir()->error( sprintf( 'Query error: %s', $results->get_error_message() ) );
 			$results = array();
 		}
 
@@ -503,16 +515,18 @@ class Dir extends Abstract_Module {
 	public function directory_list() {
 		// Check For permission.
 		if ( ! current_user_can( 'manage_options' ) || ! is_user_logged_in() ) {
+			Helper::logger()->dir()->error( 'Unauthorized - Permission access.' );
 			wp_send_json_error( __( 'Unauthorized', 'wp-smushit' ) );
 		}
 
 		// Verify nonce.
 		check_ajax_referer( 'smush_get_dir_list', 'list_nonce' );
 
-		$dir  = filter_input( INPUT_GET, 'dir', FILTER_SANITIZE_STRING );
+		$dir  = filter_input( INPUT_GET, 'dir', FILTER_SANITIZE_SPECIAL_CHARS );
 		$tree = $this->get_directory_tree( $dir );
 
 		if ( ! is_array( $tree ) ) {
+			Helper::logger()->dir()->error( 'Unauthorized - Directory empty.' );
 			wp_send_json_error( __( 'Unauthorized', 'wp-smushit' ) );
 		}
 
@@ -530,7 +544,12 @@ class Dir extends Abstract_Module {
 	private function get_directory_tree( $dir = null ) {
 		// Get the root path for a main site or subsite.
 		$root     = realpath( $this->get_root_path() );
-		$post_dir = strlen( $dir ) >= 1 ? path_join( $root, $dir ) : $root . $dir;
+		// PHP 8.1 strlen doesn't accept null.
+		if ( ! is_null( $dir ) && strlen( $dir ) >= 1 ) {
+			$post_dir = path_join( $root, $dir );
+		} else {
+			$post_dir = $root;
+		}
 
 		// If the final path doesn't contains the root path, bail out.
 		if ( ! $root || false === $post_dir || 0 !== strpos( $post_dir, $root ) ) {
@@ -883,7 +902,7 @@ class Dir extends Abstract_Module {
 		}
 
 		// FILTER_SANITIZE_URL is trimming the space if a folder contains space.
-		$smush_path = filter_input( INPUT_POST, 'smush_path', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$smush_path = filter_input( INPUT_POST, 'smush_path', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY );
 
 		try {
 			// This will add the images to the database and get the file list.
@@ -998,9 +1017,9 @@ class Dir extends Abstract_Module {
 		// Don't skip the whole sites folder but only skip media upload year folder for multi-sites.
 		if ( false !== strpos( $path, $base_dir . '/sites' ) ) {
 			// If matches the current upload path contains one of the year sub folders of the media library.
-			$path_arr = explode( '/', str_replace( $base_dir.'/sites' . '/', '', $path ) );
+			$path_arr = explode( '/', str_replace( $base_dir . '/sites' . '/', '', $path ) );
 			if ( is_array( $path_arr ) && count( $path_arr ) > 1
-			     && is_numeric( $path_arr[1] ) && $path_arr[1] > 1900 && $path_arr[1] < 2100 // Contains the year sub folder.
+				 && is_numeric( $path_arr[1] ) && $path_arr[1] > 1900 && $path_arr[1] < 2100 // Contains the year sub folder.
 			) {
 				$skip = true;
 			}

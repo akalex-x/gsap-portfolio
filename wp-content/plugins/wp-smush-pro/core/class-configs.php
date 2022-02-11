@@ -153,11 +153,23 @@ class Configs {
 		foreach ( $configs_list as $config_data ) {
 			$sanitized_data = array(
 				'id'          => filter_var( $config_data['id'], FILTER_VALIDATE_INT ),
-				'name'        => filter_var( $config_data['name'], FILTER_SANITIZE_STRING ),
-				'description' => filter_var( $config_data['description'], FILTER_SANITIZE_STRING ),
+				'name'        => filter_var( $config_data['name'], FILTER_SANITIZE_SPECIAL_CHARS ),
+				'description' => filter_var(
+					$config_data['description'],
+					FILTER_CALLBACK,
+					array(
+						'options' => 'sanitize_text_field',
+					)
+				),
 				'config'      => array(
 					'configs' => $this->sanitize_config( $config_data['config']['configs'] ),
-					'strings' => filter_var( $config_data['config']['strings'], FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY ),
+					'strings' => filter_var(
+						$config_data['config']['strings'],
+						FILTER_CALLBACK,
+						array(
+							'options' => 'sanitize_text_field',
+						)
+					),
 				),
 			);
 
@@ -258,7 +270,7 @@ class Configs {
 
 		$config = false;
 		foreach ( $stored_configs as $config_data ) {
-			if ( strval( $config_data['id'] ) === $id ) {
+			if ( (int) $config_data['id'] === (int) $id ) {
 				$config = $config_data;
 				break;
 			}
@@ -433,7 +445,13 @@ class Configs {
 			if ( ! is_array( $config['networkwide'] ) ) {
 				$sanitized['networkwide'] = $config['networkwide'];
 			} else {
-				$sanitized['networkwide'] = filter_var( $config['networkwide'], FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+				$sanitized['networkwide'] = filter_var(
+					$config['networkwide'],
+					FILTER_CALLBACK,
+					array(
+						'options' => 'sanitize_text_field',
+					)
+				);
 			}
 		}
 
@@ -463,15 +481,19 @@ class Configs {
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
 				'animation'       => array(
-					'filter' => FILTER_SANITIZE_STRING,
+					'filter' => FILTER_SANITIZE_SPECIAL_CHARS,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
 				'include'         => array(
 					'filter' => FILTER_VALIDATE_BOOLEAN,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
+				'exclude-pages' => array(
+					'filter' => FILTER_SANITIZE_URL,
+					'flags'  => FILTER_REQUIRE_ARRAY,
+				),
 				'exclude-classes' => array(
-					'filter' => FILTER_SANITIZE_STRING,
+					'filter' => FILTER_SANITIZE_SPECIAL_CHARS,
 					'flags'  => FILTER_REQUIRE_ARRAY,
 				),
 				'footer'          => FILTER_VALIDATE_BOOLEAN,
