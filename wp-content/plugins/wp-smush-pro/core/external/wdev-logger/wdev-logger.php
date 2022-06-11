@@ -1,9 +1,9 @@
 <?php
 /**
- * WPMUDEV Logger - A simple logger module
+ * WPMU DEV Logger - A simple logger module
  *
  * @version 1.0.0
- * @author WPMUDEV (Thobk)
+ * @author WPMU DEV (Thobk)
  * @package WDEV_Logger
  *
  * It's created based on Hummingbird\Core\Logger.
@@ -29,12 +29,13 @@
  * $logger->foo()->warning('...a warning...'); $logger->foo()->notice('...a notice...'); $logger->foo()->info('..info...');
  * # Global module: $logger->error('Log an error into the main log file');...(uploads/your_plugin_name/index-debug.log).
  */
+
 if ( ! defined( 'WP_CONTENT_DIR' ) ) {
 	exit;
 }
 if ( ! class_exists( 'WDEV_Logger' ) ) {
 	/**
-	 * WPMUDEV Logger
+	 * WPMU DEV Logger
 	 */
 	class WDEV_Logger {
 
@@ -62,7 +63,6 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @var string
 		 */
 		private $current_module;
-
 
 		/**
 		 * Un-lock some limit actions.
@@ -163,12 +163,12 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 *
 		 * Default settings:
 		 * array(
-		 *  'use_native_filesystem_api'     => true,
-		 *  'max_log_size'                  => 10,
-		 *  'expected_log_size_in_percent'  => 0.7,
-		 *  'log_dir'                       => 'wpmudev',
-		 *  'add_subsite_dir'               => true,
-		 *  'modules'                       => array(),
+		 *  'use_native_filesystem_api'    => true,
+		 *  'max_log_size'                 => 10,
+		 *  'expected_log_size_in_percent' => 0.7,
+		 *  'log_dir'                      => 'wpmudev',
+		 *  'add_subsite_dir'              => true,
+		 *  'modules'                      => array(),
 		 * );
 		 *
 		 * @access private
@@ -222,10 +222,10 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 
 			// disable for empty option.
 			if ( ! empty( $option ) ) {
-				add_action( 'wp_ajax_' . self::get_filter_name( 'action' ), array( $this, 'process_actions' ) );
+				add_action( 'wp_ajax_wdev_logger_action', array( $this, 'process_actions' ) );
 
 				// Add cron schedule to clean out outdated logs.
-				add_action( self::get_filter_name( 'clear_logs' ), array( $this, 'clear_logs' ) );
+				add_action( 'wdev_logger_clear_logs', array( $this, 'clear_logs' ) );
 				add_action( 'admin_init', array( $this, 'check_cron_schedule' ) );
 			}
 		}
@@ -244,19 +244,9 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			if ( $this->set_current_module( $name ) ) {
 				$this->un_lock = true;
 			} elseif ( $this->enabling_debug_log_mode() ) {
-				error_log( sprintf( __( 'Module "%1$s" does not exists, list of registered modules are ["%2$s"]. Continue with global module "%3$s".', 'wpmudev' ), $name, join( '", "', array_keys( $this->modules ) ), $this->option['global_module'] ) );
+				error_log( sprintf( 'Module "%1$s" does not exists, list of registered modules are ["%2$s"]. Continue with global module "%3$s".', $name, join( '", "', array_keys( $this->modules ) ), $this->option['global_module'] ) );//phpcs:ignore
 			}
 			return $this;
-		}
-
-		/**
-		 * Get filter name.
-		 *
-		 * @param string $name Filter name
-		 * @return string Filter name.
-		 */
-		public static function get_filter_name( $name = '' ) {
-			return "wdev_logger_{$name}";
 		}
 
 		/**
@@ -269,37 +259,10 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		}
 
 		/**
-		 * Delete option.
-		 *
-		 * @return boolean
-		 */
-		public function delete_option() {
-			if ( $this->option_key ) {
-				return delete_site_option( $this->option_key );
-			}
-			return false;
-		}
-
-		/**
-		 * Set option.
-		 *
-		 * @param array $option Logger option.
-		 *
-		 * @return boolean
-		 */
-		public function set_option( $option ) {
-			if ( $this->option_key ) {
-				$this->parse_option( $option, $this->option_key, ! empty( $option ) );
-				return true;
-			}
-			return false;
-		}
-
-		/**
 		 * Main logging function.
 		 *
 		 * @param mixed       $message  Data to write to log.
-		 * @param string|null $type     Log type (Error, Warning, Notice, etc)
+		 * @param string|null $type     Log type (Error, Warning, Notice, etc).
 		 */
 		public function log( $message, $type = null ) {
 			$this->maybe_active_global_module();
@@ -317,7 +280,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			}
 
 			if ( ! empty( $type ) && is_string( $type ) ) {
-				$type         = strtolower( $type );
+				$type    = strtolower( $type );
 				$message = ucfirst( $type ) . ': ' . $message;
 			}
 
@@ -329,7 +292,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				$backtrace = array_filter(
 					$backtrace,
 					function( $trace ) {
-						return __FILE__ !== $trace['file'] && false !== strpos( $trace['file'], WP_CONTENT_DIR );
+						return ! isset( $trace['file'] ) || __FILE__ !== $trace['file'] && false !== strpos( $trace['file'], WP_CONTENT_DIR );
 					}
 				);
 				$message .= PHP_EOL .'['. date('c') .'] Stack trace: '. PHP_EOL . print_r( $backtrace, true );//phpcs:ignore
@@ -345,7 +308,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @param mixed $message Data to write to log.
 		 */
 		public function error( $message ) {
-			return $this->log( $message, __( 'Error' ) );
+			return $this->log( $message, 'Error' );
 		}
 
 		/**
@@ -355,7 +318,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @param mixed $message Data to write to log.
 		 */
 		public function notice( $message ) {
-			return $this->log( $message, __( 'Notice' ) );
+			return $this->log( $message, 'Notice' );
 		}
 
 		/**
@@ -365,7 +328,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @param mixed $message Data to write to log.
 		 */
 		public function warning( $message ) {
-			return $this->log( $message, __( 'Warning' ) );
+			return $this->log( $message, 'Warning' );
 		}
 
 		/**
@@ -375,16 +338,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @param mixed $message Data to write to log.
 		 */
 		public function info( $message ) {
-			return $this->log( $message, __( 'Info' ) );
-		}
-
-		/**
-		 * Create nonce for Ajax action 'wdev_logger_action'
-		 *
-		 * @return string The token
-		 */
-		public function create_nonce() {
-			return wp_create_nonce( $this->get_log_action_name() );
+			return $this->log( $message, 'Info' );
 		}
 
 		/**
@@ -400,8 +354,8 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			return wp_nonce_url(
 				add_query_arg(
 					array(
-						'action' => self::get_filter_name( 'action' ),
-						'log_action'   => 'download',
+						'action'     => 'wdev_logger_action',
+						'log_action' => 'download',
 						'log_module' => $this->current_module,
 					),
 					admin_url( 'admin-ajax.php' )
@@ -417,26 +371,28 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * Accepts module name (slug) and action. So far only 'download' and 'delete' actions is supported.
 		 */
 		public function process_actions() {
+			// phpcs:ignore
 			if ( isset( $_REQUEST['log_action'], $_REQUEST['log_module'], $_REQUEST[ self::NONCE_NAME ] ) && wp_verify_nonce( $_REQUEST[ self::NONCE_NAME ], $this->get_log_action_name() ) ) { // Input var ok.
 				$action = sanitize_text_field( wp_unslash( $_REQUEST['log_action'] ) );   // Input var ok.
 				$module = sanitize_text_field( wp_unslash( $_REQUEST['log_module'] ) ); // Input var ok.
 
 				// Not called by a registered module.
 				if ( ! isset( $this->modules[ $module ] ) ) {
-					return;
+					/* translators: %s Method name */
+					wp_send_json_error( sprintf( __( 'Module %s does not exist.', 'wpmudev' ), $module ) );
 				}
 
 				// Only allow these actions.
 				if ( in_array( $action, array( 'download', 'delete' ), true ) && method_exists( $this, $action ) ) {
 					$should_return = isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'];
-					$result = call_user_func( array( $this, $action ), $module, $should_return );
+					$result        = call_user_func( array( $this, $action ), $module, $should_return );
 					if ( $should_return ) {
 						wp_send_json_success( $result );
 					}
 					exit;
 				}
 				/* translators: %s Method name */
-				wp_send_json_error( esc_html__( 'Method %s does not exist.', $action ) );
+				wp_send_json_error( sprintf( __( 'Method %s does not exist.', 'wpmudev' ), $action ) );
 			}
 		}
 
@@ -489,7 +445,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			} elseif ( isset( $this->option[ $name ] ) ) {
 				$value = $this->option[ $name ];
 			}
-			return apply_filters( self::get_filter_name( "get_option_{$name}" ), $value, $this->current_module, $this->option );
+			return apply_filters( "wdev_logger_get_option_{$name}", $value, $this->current_module, $this->option );
 		}
 
 		/**
@@ -580,9 +536,11 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			}
 			// If setting level for global module, we will set it in the option, so the module can inherit it.
 			if ( $is_global_settings && $this->current_module === $this->option['global_module'] ) {
-				$this->{$level_type} = $this->option[ $level_type ] = $level;
+				$this->option[ $level_type ] = $level;
+				$this->{$level_type}         = $level;
 			} else {
-				$this->{$level_type} = $this->modules[ $this->current_module ][ $level_type ] = $level;
+				$this->modules[ $this->current_module ][ $level_type ] = $level;
+				$this->{$level_type}                                   = $level;
 			}
 			// Save option.
 			$this->save_option();
@@ -636,7 +594,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @return string Action name.
 		 */
 		private function get_log_action_name() {
-			return self::get_filter_name( 'action_' . str_replace( self::get_filter_name(), '', $this->option_key ) );
+			return 'action_' . str_replace( 'wdev_logger_', '', $this->option_key );
 		}
 
 		/**
@@ -653,7 +611,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				if ( empty( $option_key ) ) {
 					list( $option_key ) = explode( '/', ltrim( str_replace( WP_PLUGIN_DIR, '', __FILE__ ), '/' ) );
 				}
-				$this->option_key = self::get_filter_name( $option_key );
+				$this->option_key = 'wdev_logger_' . $option_key;
 			}
 
 			return $this->option_key;
@@ -671,12 +629,12 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		private function parse_option( $option, $option_key, $force = false ) {
 			// Default settings.
 			$this->option = array(
-				'use_native_filesystem_api'     => true,
-				'max_log_size'                  => 10,
-				'expected_log_size_in_percent'  => 0.7,
-				'log_dir'                       => 'wpmudev',
-				'add_subsite_dir'               => true,
-				'modules'                       => array(),
+				'use_native_filesystem_api'    => true,
+				'max_log_size'                 => 10,
+				'expected_log_size_in_percent' => 0.7,
+				'log_dir'                      => 'wpmudev',
+				'add_subsite_dir'              => true,
+				'modules'                      => array(),
 			);
 			if ( $force ) {
 				$cached_option = false;
@@ -699,7 +657,8 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 
 					// set current module.
 					if ( ! empty( $cached_option['global_module'] ) && isset( $this->modules[ $cached_option['global_module'] ] ) ) {
-						$this->option['global_module'] = $this->current_module = $cached_option['global_module'];
+						$this->current_module          = $cached_option['global_module'];
+						$this->option['global_module'] = $this->current_module;
 					} else {
 						$cached_option = array();
 					}
@@ -738,15 +697,14 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 					if ( empty( $module_option['name'] ) ) {
 						$module_option['name'] = str_replace( '_', '-', $module_slug );
 					}
-					$module_option['name'] = sanitize_title( $module_option['name'] );
-
+					$module_option['name']         = sanitize_title( $module_option['name'] );
 					$this->modules[ $module_slug ] = $module_option;
 				}
 
 				// Maybe activate the general module.
 				if ( empty( $this->current_module ) ) {
 					$this->modules['index'] = $this->option;
-					$this->current_module = 'index';
+					$this->current_module   = 'index';
 				}
 				$this->option['global_module'] = $this->current_module;
 
@@ -767,7 +725,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				$this->option_key,
 				array(
 					'option'        => $this->option,
-					'modules'        => $this->modules,
+					'modules'       => $this->modules,
 					'global_module' => $this->current_module,
 				)
 			);
@@ -925,19 +883,18 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				// Try to connect Filesystem API again by using method direct to use the native Filesystem API.
 				if ( 'direct' !== $access_type && $this->get_module_option( 'use_native_filesystem_api' ) ) {
 					if ( $this->enabling_debug_log_mode() && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors() ) {
-						/* translators: 1: Filesystem method 2: Error detail */
-						$error_msg = sprintf( __( 'Cannot connect to Filesystem API via %1$s: %2$s, trying to use the direct method!', 'wpmudev' ), strtoupper( $access_type ), $wp_filesystem->errors->get_error_message() );
+						$error_msg = sprintf( 'Cannot connect to Filesystem API via %1$s: %2$s, trying to use the direct method!', strtoupper( $access_type ), $wp_filesystem->errors->get_error_message() );
 					}
 
 					add_filter( 'filesystem_method', array( $this, 'force_access_direct_method' ), 9999 );
 					if ( ! WP_Filesystem( true ) ) {
 						// This case should be never catch unless file wp-admin/includes/class-wp-filesystem-ftpext.php doesn't exist.
-						$connect_st = 0;
+						$connect_st  = 0;
 						$this->error = true;
 					}
 					remove_filter( 'filesystem_method', array( $this, 'force_access_direct_method' ), 9999 );
 				} else {
-					$connect_st = 0;
+					$connect_st  = 0;
 					$this->error = true;
 				}
 
@@ -949,7 +906,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 							$error_msg = $wp_filesystem->errors->get_error_message();
 						} else {
 							/* translators: %s Filesystem method */
-							$error_msg = sprintf( __( 'Connect to the Filesystem API via method %s failure!', 'wpmudev' ), strtoupper( $access_type ) );
+							$error_msg = sprintf( 'Connect to the Filesystem API via method %s failure!', strtoupper( $access_type ) );
 						}
 					}
 
@@ -1003,7 +960,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				$this->modules[ $this->current_module ]['file'] = $file;
 			}
 
-			return apply_filters( self::get_filter_name( 'get_file' ), $file, $this->current_module, $this->modules[ $this->current_module ] );
+			return apply_filters( 'wdev_logger_get_file', $file, $this->current_module, $this->modules[ $this->current_module ] );
 		}
 
 		/**
@@ -1029,7 +986,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * Check if module should log or not.
 		 *
 		 * @param mixed  $message Message.
-		 * @param string $type Message type: error | warning | notice | info
+		 * @param string $type Message type: error | warning | notice | info.
 		 *
 		 * @access private
 		 *
@@ -1064,7 +1021,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				$do_log = $this->level_can_do( $this->log_level, $type, $do_log );
 			}
 
-			return apply_filters( self::get_filter_name( 'should_log' ), $do_log, $this->current_module, $message, );
+			return apply_filters( 'wdev_logger_should_log', $do_log, $this->current_module, $message );
 		}
 
 		/**
@@ -1102,7 +1059,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 						break;
 				}
 			}
-			return apply_filters( self::get_filter_name( 'level_can_do' ), $can_do, $level, $type, $checking_debug_log_level );
+			return apply_filters( 'wdev_logger_level_can_do', $can_do, $level, $type, $checking_debug_log_level );
 		}
 
 		/**
@@ -1136,7 +1093,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * @return bool True on success, false on failure.
 		 */
 		public function create_log_dir( $log_dir ) {
-			if ( ! @mkdir( $log_dir, FS_CHMOD_DIR, true ) ) {
+			if ( ! mkdir( $log_dir, FS_CHMOD_DIR, true ) ) {
 				global $wp_filesystem;
 				$log_dir = str_replace( '\\', '/', $log_dir );
 				$log_dir = trailingslashit( $log_dir );
@@ -1187,7 +1144,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 			 * By default, we will try to append the message to the log file.
 			 * Add a filter to allow third-party doing it by their self.
 			 */
-			$check = apply_filters( self::get_filter_name( 'update_file' ), null, $file, $message, $this->current_module );
+			$check = apply_filters( 'wdev_logger_update_file', null, $file, $message, $this->current_module );
 			if ( null !== $check ) {
 				return (bool) $check;
 			}
@@ -1199,7 +1156,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 					// continue to use direct method.
 				case 'direct':
 					// Append message to the log file.
-					$ret = @file_put_contents( $file, $message, FILE_APPEND | LOCK_EX );
+					$ret = file_put_contents( $file, $message, FILE_APPEND | LOCK_EX );
 
 					if ( strlen( $message ) !== $ret ) {
 						return false;
@@ -1266,9 +1223,9 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 				if ( $module !== $this->current_module ) {
 					$this->current_module = $module;
 					// Reset debug/log level.
-					$this->log_level = null;
+					$this->log_level   = null;
 					$this->debug_level = null;
-					$set = 1;
+					$set               = 1;
 				}
 			}
 
@@ -1299,16 +1256,14 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 *
 		 * @param bool $return Return a instance of WP_Error
 		 * or exit if we can't detect the global module.
-		 *
-		 * @return void
 		 */
 		public function maybe_active_global_module( $return = false ) {
 			if ( ! $this->un_lock ) {
 				if ( ! ( isset( $this->option['global_module'] ) && $this->set_current_module( $this->option['global_module'] ) ) ) {
 					if ( $return ) {
-						return new WP_Error( 'non-registered', esc_html__( 'Cheating, huh?', 'wpmudev' ) );
+						return new WP_Error( 'non-registered', 'Cheating, huh?' );
 					} else {
-						wp_die( esc_html__( 'Cheating, huh?', 'wpmudev' ) );
+						wp_die( 'Cheating, huh?' );
 					}
 				}
 			} else {
@@ -1321,8 +1276,8 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 		 * Set a schedule to clean the logs.
 		 */
 		public function check_cron_schedule() {
-			if ( ! wp_next_scheduled( self::get_filter_name( 'clear_logs' ) ) ) {
-				wp_schedule_event( strtotime( 'midnight' ), 'daily', self::get_filter_name( 'clear_logs' ) );
+			if ( ! wp_next_scheduled( 'wdev_logger_clear_logs' ) ) {
+				wp_schedule_event( strtotime( 'midnight' ), 'daily', 'wdev_logger_clear_logs' );
 			}
 		}
 
@@ -1344,7 +1299,7 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 							continue;
 						}
 
-						$file_size = $wp_filesystem->size( $file );
+						$file_size     = $wp_filesystem->size( $file );
 						$max_file_size = $this->get_module_option( 'max_log_size' ) * MB_IN_BYTES;
 						if ( $file_size < $max_file_size ) {
 							continue;
@@ -1355,9 +1310,8 @@ if ( ! class_exists( 'WDEV_Logger' ) ) {
 							continue;
 						}
 						$contents = $wp_filesystem->get_contents( $file );
-
-						$offset = intval( $file_size - $expected_file_size );
-						$pos = strpos( $contents, PHP_EOL . '[', $offset );
+						$offset   = intval( $file_size - $expected_file_size );
+						$pos      = strpos( $contents, PHP_EOL . '[', $offset );
 						if ( ! $pos ) {
 							$pos = strpos( $contents, PHP_EOL, $offset );
 						}

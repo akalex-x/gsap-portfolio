@@ -6,7 +6,7 @@
  * @package WPMUDEV_Dashboard
  */
 
-defined( 'WPINC' ) || die();	  	 	    	    	  	 
+defined( 'WPINC' ) || die();
 
 ?>
 

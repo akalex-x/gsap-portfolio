@@ -118,7 +118,7 @@ function wpmudev_logger_ajax() {
             'action': 'wdev_logger_action',
             'log_action': 'delete',
             'log_module': 'foo',
-            <?php echo WDEV_Logger::NONCE_NAME;?>: '<?php echo WDEV_Logger::create_from_option( $your_plugin_key_or_null )->create_nonce();?>'
+            <?php echo WDEV_Logger::NONCE_NAME;?>: '<?php echo wp_create_nonce('action_[your_option_key]');?>'
         };
         jQuery.post(ajaxurl, data, function(response) {
             console.log(response);

@@ -158,7 +158,12 @@ class WebP extends Abstract_Module {
 		$udir       = $this->get_upload_dir();
 		$test_image = $udir['upload_url'] . '/smush-webp-test.png';
 
-		$args['headers']['Accept'] = 'image/webp';
+		$args = array(
+			'timeout' => 10,
+			'headers' => array(
+				'Accept' => 'image/webp',
+			),
+		);
 
 		// Add support for basic auth in WPMU DEV staging.
 		if ( isset( $_SERVER['WPMUDEV_HOSTING_ENV'] ) && 'staging' === $_SERVER['WPMUDEV_HOSTING_ENV'] && isset( $_SERVER['PHP_AUTH_USER'] ) ) {
@@ -166,7 +171,13 @@ class WebP extends Abstract_Module {
 		}
 
 		$response = wp_remote_get( $test_image, $args );
-		$code     = wp_remote_retrieve_response_code( $response );
+
+		// If there is an error, return.
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
 
 		// Check the image's format when the request was successful.
 		if ( 200 === $code ) {
@@ -181,6 +192,7 @@ class WebP extends Abstract_Module {
 			$code,
 			wp_remote_retrieve_response_message( $response )
 		);
+
 		return new WP_Error( $code, $error_message );
 	}
 
@@ -199,16 +211,25 @@ class WebP extends Abstract_Module {
 		$directory  = trailingslashit( basename( $udir['upload_rel_path'] ) );
 		$regex_base = $base . '(' . $directory . ')';
 
-		$code = 'location ~* "' . str_replace( '/', '\/', $regex_base ) . '(.*.(?:png|jpe?g))" {
-  add_header Vary Accept;
-  set $image_path $2;
-  if (-f "' . $udir['webp_path'] . '/disable_smush_webp") {
-    break;
-  }
-  if ($http_accept !~* "webp") {
-    break;
-  }
-  try_files /' . trailingslashit( $udir['webp_rel_path'] ) . '$image_path.webp $uri =404;
+		/**
+		 * We often need to remove WebP file extension from Nginx cache rule in order to make Smush WebP work,
+		 * so always add expiry header rule for Nginx.
+		 *
+		 * @since 3.9.8
+		 * @see https://incsub.atlassian.net/browse/SMUSH-1072
+		 */
+
+		$code = 'location ~* "' . str_replace( '/', '\/', $regex_base ) . '(.*\.(?:png|jpe?g))" {
+	add_header Vary Accept;
+	set $image_path $2;
+	if (-f "' . $udir['webp_path'] . '/disable_smush_webp") {
+		break;
+	}
+	if ($http_accept !~* "webp") {
+		break;
+	}
+	expires	max;
+	try_files /' . trailingslashit( $udir['webp_rel_path'] ) . '$image_path.webp $uri =404;
 }';
 
 		if ( true === $marker ) {
@@ -242,7 +263,7 @@ class WebP extends Abstract_Module {
 		if ( 'root' === $location ) {
 			// This works on single sites at root.
 			$code .= ' RewriteCond ' . $rewrite_path . '/$1.webp -f
- RewriteRule ' . $udir['upload_rel_path'] . '/(.*.(?:png|jpe?g))$ ' . $udir['webp_rel_path'] . '/$1.webp [NC,T=image/webp]';
+ RewriteRule ' . $udir['upload_rel_path'] . '/(.*\.(?:png|jpe?g))$ ' . $udir['webp_rel_path'] . '/$1.webp [NC,T=image/webp]';
 		} else {
 			// This works at /uploads/.
 			$code .= ' RewriteCond ' . $rewrite_path . '/$1.$2.webp -f
@@ -337,13 +358,21 @@ class WebP extends Abstract_Module {
 		// For example, wp-content/smush-webp for wp-content/uploads.
 		$webp_root_rel_path = dirname( $upload_root_rel_path ) . '/smush-webp';
 
-		return array(
-			'upload_path'     => $upload['basedir'],
-			'upload_rel_path' => $upload_root_rel_path,
-			'upload_url'      => $upload['baseurl'],
-			'webp_path'       => dirname( $upload['basedir'] ) . '/smush-webp',
-			'webp_rel_path'   => $webp_root_rel_path,
-			'webp_url'        => dirname( $upload['baseurl'] ) . '/smush-webp',
+		/**
+		 * Add a hook for user custom webp address.
+		 *
+		 * @since 3.9.8
+		 */
+		return apply_filters(
+			'wp_smush_webp_dir',
+			array(
+				'upload_path'     => $upload['basedir'],
+				'upload_rel_path' => $upload_root_rel_path,
+				'upload_url'      => $upload['baseurl'],
+				'webp_path'       => dirname( $upload['basedir'] ) . '/smush-webp',
+				'webp_rel_path'   => $webp_root_rel_path,
+				'webp_url'        => dirname( $upload['baseurl'] ) . '/smush-webp',
+			)
 		);
 	}
 
@@ -495,6 +524,8 @@ class WebP extends Abstract_Module {
 		if ( ! $this->should_be_converted( $attachment_id ) ) {
 			return $webp_files;
 		}
+		// Maybe add scaled image file to the meta sizes.
+		$meta = apply_filters( 'wp_smush_add_scaled_images_to_meta', $meta, $attachment_id );
 
 		// File path and URL for original image.
 		$file_path = Helper::get_attached_file( $attachment_id );// S3+.
@@ -505,7 +536,13 @@ class WebP extends Abstract_Module {
 
 		// If images has other registered size, smush them first.
 		if ( ! empty( $meta['sizes'] ) && ! has_filter( 'wp_image_editors', 'photon_subsizes_override_image_editors' ) ) {
-			$converted_thumbs = array();
+			/**
+			 * Add the full image as a converted image to avoid doing it duplicate.
+			 * E.g. Exclude the scaled file when disable compress the original image.
+			 */
+			$converted_thumbs = array(
+				basename( $file_path ) => 1,
+			);
 			foreach ( $meta['sizes'] as $size_data ) {
 				// Some thumbnail sizes are using the same image path, so check if the thumbnail file is converted.
 				if ( isset( $converted_thumbs[ $size_data['file'] ] ) ) {

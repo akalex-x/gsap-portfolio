@@ -12,6 +12,7 @@
 
 namespace Smush\Core\Modules;
 
+use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Smush\Core\Core;
@@ -178,6 +179,7 @@ class Dir extends Abstract_Module {
 	 * @since 2.8.1
 	 */
 	public function directory_smush_start() {
+		check_ajax_referer( 'wp-smush-ajax' );
 		$this->scanner->init_scan();
 		wp_send_json_success();
 	}
@@ -188,8 +190,10 @@ class Dir extends Abstract_Module {
 	 * @since 2.8.1
 	 */
 	public function directory_smush_check_step() {
+		check_ajax_referer( 'wp-smush-ajax' );
+
 		$urls         = $this->get_scanned_images();
-		$current_step = absint( $_POST['step'] ); // Input var ok.
+		$current_step = isset( $_POST['step'] ) ? absint( $_POST['step'] ) : 0;
 
 		$this->scanner->update_current_step( $current_step );
 
@@ -206,9 +210,11 @@ class Dir extends Abstract_Module {
 	 * @since 2.8.1
 	 */
 	public function directory_smush_finish() {
-		$items   = isset( $_POST['items'] ) ? absint( $_POST['items'] ) : 0; // Input var ok.
-		$failed  = isset( $_POST['failed'] ) ? absint( $_POST['failed'] ) : 0; // Input var ok.
-		$skipped = isset( $_POST['skipped'] ) ? absint( $_POST['skipped'] ) : 0; // Input var ok.
+		check_ajax_referer( 'wp-smush-ajax' );
+
+		$items   = isset( $_POST['items'] ) ? absint( $_POST['items'] ) : 0;
+		$failed  = isset( $_POST['failed'] ) ? absint( $_POST['failed'] ) : 0;
+		$skipped = isset( $_POST['skipped'] ) ? absint( $_POST['skipped'] ) : 0;
 
 		// If any images failed to smush, store count.
 		if ( $failed > 0 ) {
@@ -231,6 +237,7 @@ class Dir extends Abstract_Module {
 	 * @since 2.8.1
 	 */
 	public function directory_smush_cancel() {
+		check_ajax_referer( 'wp-smush-ajax' );
 		$this->scanner->reset_scan();
 		wp_send_json_success();
 	}
@@ -279,7 +286,7 @@ class Dir extends Abstract_Module {
 		if ( false !== stripos( $path, 'phar://' ) ) {
 			wp_send_json_error(
 				array(
-					'error' => esc_html_e( 'Potential Phar PHP Object Injection detected', 'wp-smushit' ),
+					'error' => esc_html__( 'Potential Phar PHP Object Injection detected', 'wp-smushit' ),
 					'image' => array(
 						'id' => $id,
 					),
@@ -306,7 +313,7 @@ class Dir extends Abstract_Module {
 			// Store the error in DB. All good, Update the stats.
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$wpdb->prefix}smush_dir_images SET error=%s WHERE id=%d LIMIT 1",
+					"UPDATE {$wpdb->base_prefix}smush_dir_images SET error=%s WHERE id=%d LIMIT 1",
 					$error_msg,
 					$id
 				)
@@ -329,10 +336,10 @@ class Dir extends Abstract_Module {
 		// All good, Update the stats.
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}smush_dir_images SET error=NULL, image_size=%d, file_time=%d, lossy=%d, meta=%d WHERE id=%d LIMIT 1",
+				"UPDATE {$wpdb->base_prefix}smush_dir_images SET error=NULL, image_size=%d, file_time=%d, lossy=%d, meta=%d WHERE id=%d LIMIT 1",
 				$results['data']->after_size,
-				@filectime( $path ), // Get file time.
-				WP_Smush::is_pro() && $this->settings->get( 'lossy' ),
+				filectime( $path ), // Get file time.
+				$this->settings->get( 'lossy' ),
 				$this->settings->get( 'strip_exif' ),
 				$id
 			)
@@ -370,7 +377,7 @@ class Dir extends Abstract_Module {
 		 * meta       -> For any future use
 		 */
 		$sql = "CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}smush_dir_images (
-			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			id mediumint(9) UNSIGNED NOT NULL AUTO_INCREMENT,
 			path text NOT NULL,
 			path_hash CHAR(32),
 			resize varchar(55),
@@ -381,7 +388,7 @@ class Dir extends Abstract_Module {
 			file_time int(10) unsigned,
 			last_scan timestamp DEFAULT '0000-00-00 00:00:00',
 			meta text,
-			UNIQUE KEY id (id),
+  			PRIMARY KEY (id),
 			UNIQUE KEY path_hash (path_hash),
 			KEY image_size (image_size)
 		) $charset_collate;";
@@ -395,7 +402,7 @@ class Dir extends Abstract_Module {
 		// Hide errors.
 		$wpdb->hide_errors();
 		// Create table.
-		$wpdb->query( $sql );//phpcs:ignore
+		$wpdb->query( $sql );
 
 		// Set flag.
 		self::$table_exist = self::table_exist( true );
@@ -409,7 +416,7 @@ class Dir extends Abstract_Module {
 	public function get_scanned_images() {
 		global $wpdb;
 
-		$results = $wpdb->get_results( "SELECT id, path, orig_size FROM {$wpdb->prefix}smush_dir_images WHERE last_scan = (SELECT MAX(last_scan) FROM {$wpdb->prefix}smush_dir_images )  GROUP BY id ORDER BY id", ARRAY_A ); // Db call ok; no-cache ok.
+		$results = $wpdb->get_results( "SELECT id, path, orig_size FROM {$wpdb->base_prefix}smush_dir_images WHERE last_scan = (SELECT MAX(last_scan) FROM {$wpdb->base_prefix}smush_dir_images )  GROUP BY id ORDER BY id", ARRAY_A ); // Db call ok; no-cache ok.
 
 		// Return image ids.
 		if ( is_wp_error( $results ) ) {
@@ -431,7 +438,7 @@ class Dir extends Abstract_Module {
 		global $wpdb;
 
 		$condition = 'image_size IS NULL';
-		if ( WP_Smush::is_pro() && $this->settings->get( 'lossy' ) ) {
+		if ( $this->settings->get( 'lossy' ) ) {
 			$condition .= ' OR lossy <> 1';
 		}
 
@@ -439,7 +446,7 @@ class Dir extends Abstract_Module {
 			$condition .= ' OR meta <> 1';
 		}
 
-		$results = $wpdb->get_results( "SELECT id, path, orig_size FROM {$wpdb->prefix}smush_dir_images WHERE {$condition} && last_scan = (SELECT MAX(last_scan) FROM {$wpdb->prefix}smush_dir_images )  GROUP BY id ORDER BY id", ARRAY_A ); // Db call ok; no-cache ok.
+		$results = $wpdb->get_results( "SELECT id, path, orig_size FROM {$wpdb->base_prefix}smush_dir_images WHERE {$condition} && last_scan = (SELECT MAX(last_scan) FROM {$wpdb->base_prefix}smush_dir_images )  GROUP BY id ORDER BY id", ARRAY_A ); // Db call ok; no-cache ok.
 
 		// Return image ids.
 		if ( is_wp_error( $results ) ) {
@@ -462,9 +469,9 @@ class Dir extends Abstract_Module {
 
 		return $wpdb->get_results(
 			"SELECT id, path, error
-					FROM {$wpdb->prefix}smush_dir_images
+					FROM {$wpdb->base_prefix}smush_dir_images
 					WHERE error IS NOT NULL
-						AND last_scan = ( SELECT MAX(last_scan) FROM {$wpdb->prefix}smush_dir_images )
+						AND last_scan = ( SELECT MAX(last_scan) FROM {$wpdb->base_prefix}smush_dir_images )
 					LIMIT 20",
 			ARRAY_A
 		); // Db call ok; no-cache ok.
@@ -482,8 +489,8 @@ class Dir extends Abstract_Module {
 
 		return (int) $wpdb->get_var(
 			"SELECT COUNT(id)
-					FROM {$wpdb->prefix}smush_dir_images
-					WHERE error IS NOT NULL AND last_scan = ( SELECT MAX(last_scan) FROM {$wpdb->prefix}smush_dir_images )"
+					FROM {$wpdb->base_prefix}smush_dir_images
+					WHERE error IS NOT NULL AND last_scan = ( SELECT MAX(last_scan) FROM {$wpdb->base_prefix}smush_dir_images )"
 		); // Db call ok.
 	}
 
@@ -543,7 +550,8 @@ class Dir extends Abstract_Module {
 	 */
 	private function get_directory_tree( $dir = null ) {
 		// Get the root path for a main site or subsite.
-		$root     = realpath( $this->get_root_path() );
+		$root = realpath( $this->get_root_path() );
+
 		// PHP 8.1 strlen doesn't accept null.
 		if ( ! is_null( $dir ) && strlen( $dir ) >= 1 ) {
 			$post_dir = path_join( $root, $dir );
@@ -551,7 +559,7 @@ class Dir extends Abstract_Module {
 			$post_dir = $root;
 		}
 
-		// If the final path doesn't contains the root path, bail out.
+		// If the final path doesn't contain the root path, bail out.
 		if ( ! $root || false === $post_dir || 0 !== strpos( $post_dir, $root ) ) {
 			return false;
 		}
@@ -620,7 +628,7 @@ class Dir extends Abstract_Module {
 		if ( is_main_site() ) {
 			/**
 			 * Sometimes content directories may reside outside
-			 * the installation sub directory. We need to make sure
+			 * the installation sub-directory. We need to make sure
 			 * we are selecting the root directory, not installation
 			 * directory.
 			 *
@@ -628,7 +636,7 @@ class Dir extends Abstract_Module {
 			 * @see https://app.asana.com/0/14491813218786/487682361460247/f
 			 */
 			$content_path = explode( '/', wp_normalize_path( WP_CONTENT_DIR ) );
-			// Get root path and explod.
+			// Get root path and explode.
 			$root_path = explode( '/', get_home_path() );
 
 			// Find the length of the shortest one.
@@ -693,7 +701,7 @@ class Dir extends Abstract_Module {
 	 *
 	 * @param string|array $paths  Path where to look for images, or selected images.
 	 *
-	 * @throws \Exception Never, actually. Supposedly, when an invalid directory was selected.
+	 * @throws Exception Never, actually. Supposedly, when an invalid directory was selected.
 	 * @return array
 	 */
 	private function get_image_list( $paths = '' ) {
@@ -727,10 +735,9 @@ class Dir extends Abstract_Module {
 			/**
 			 * Path is an image.
 			 *
-			 * @TODO: The is_dir() check fails directories with spaces.
+			 * TODO: The is_dir() check fails directories with spaces.
 			 */
 			if ( ! is_dir( $path ) && ! $this->is_media_library_file( $path ) && ! strpos( $path, '.bak' ) ) {
-
 				if ( ! $this->is_image( $path ) ) {
 					continue;
 				}
@@ -750,8 +757,8 @@ class Dir extends Abstract_Module {
 
 				$images[] = $path;
 				$images[] = md5( $path );
-				$images[] = @filesize( $path );  // Get the file size.
-				$images[] = @filectime( $path ); // Get the file modification time.
+				$images[] = filesize( $path );  // Get the file size.
+				$images[] = filectime( $path ); // Get the file modification time.
 				$images[] = $timestamp;
 				$values[] = '(%s, %s, %d, %d, %s)';
 				$count++;
@@ -807,7 +814,7 @@ class Dir extends Abstract_Module {
 					$images[] = $file_path;
 					$images[] = md5( $file_path );
 					$images[] = $file->getSize();
-					$images[] = @filectime( $file_path ); // Get the file modification time.
+					$images[] = filectime( $file_path ); // Get the file modification time.
 					$images[] = $timestamp;
 					$values[] = '(%s, %s, %d, %d, %s)';
 					$count++;
@@ -817,7 +824,8 @@ class Dir extends Abstract_Module {
 				if ( $count >= 5000 ) {
 					$count = 0;
 					$this->store_images( $values, $images );
-					$images = $values = array();
+					$images = array();
+					$values = array();
 				}
 			}
 		}
@@ -865,10 +873,8 @@ class Dir extends Abstract_Module {
 		$values = implode( ',', $values );
 
 		// Replace with image path and respective parameters.
-		$query = "INSERT INTO {$wpdb->prefix}smush_dir_images (path, path_hash, orig_size, file_time, last_scan) VALUES $values ON DUPLICATE KEY UPDATE image_size = IF( file_time < VALUES(file_time), NULL, image_size ), file_time = IF( file_time < VALUES(file_time), VALUES(file_time), file_time ), last_scan = VALUES( last_scan )";
-		$query = $wpdb->prepare( $query, $images ); // Db call ok; no-cache ok.
-
-		return $query;
+		$query = "INSERT INTO {$wpdb->base_prefix}smush_dir_images (path, path_hash, orig_size, file_time, last_scan) VALUES $values ON DUPLICATE KEY UPDATE image_size = IF( file_time < VALUES(file_time), NULL, image_size ), file_time = IF( file_time < VALUES(file_time), VALUES(file_time), file_time ), last_scan = VALUES( last_scan )";	 			  	 		  	 						
+		return $wpdb->prepare( $query, $images ); // Db call ok; no-cache ok.
 	}
 
 	/**
@@ -907,7 +913,7 @@ class Dir extends Abstract_Module {
 		try {
 			// This will add the images to the database and get the file list.
 			$files = $this->get_image_list( $smush_path );
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->send_error( $e->getMessage() );
 		}
 
@@ -915,6 +921,9 @@ class Dir extends Abstract_Module {
 		if ( empty( $files ) ) {
 			$this->send_error( __( 'We could not find any images in the selected directory.', 'wp-smushit' ) );
 		}
+
+		// Clear cache.
+		wp_cache_delete( 'wp-smush-dir_total_stats', 'wp-smush' );
 
 		// Send response.
 		wp_send_json_success( count( $files ) );
@@ -939,10 +948,10 @@ class Dir extends Abstract_Module {
 			return false;
 		}
 
-		$a = @getimagesize( $path );
+		$a = wp_getimagesize( $path );
 
-		// If a is not set.
-		if ( ! $a || empty( $a ) ) {
+		// If $a is not set.
+		if ( empty( $a ) ) {
 			return false;
 		}
 
@@ -968,9 +977,7 @@ class Dir extends Abstract_Module {
 		$admin_path = rtrim( str_replace( get_bloginfo( 'url' ) . '/', ABSPATH, get_admin_url() ), '/' );
 
 		// Make it filterable, so other plugins can hook into it.
-		$admin_path = apply_filters( 'wp_smush_get_admin_path', $admin_path );
-
-		return $admin_path;
+		return apply_filters( 'wp_smush_get_admin_path', $admin_path );
 	}
 
 	/**
@@ -978,7 +985,7 @@ class Dir extends Abstract_Module {
 	 *
 	 * @param string $path  File path.
 	 *
-	 * @return bool Whether a image or not
+	 * @return bool Whether an image or not
 	 */
 	private function is_image_from_extension( $path ) {
 		$supported_image = array( 'gif', 'jpg', 'jpeg', 'png' );
@@ -1017,9 +1024,9 @@ class Dir extends Abstract_Module {
 		// Don't skip the whole sites folder but only skip media upload year folder for multi-sites.
 		if ( false !== strpos( $path, $base_dir . '/sites' ) ) {
 			// If matches the current upload path contains one of the year sub folders of the media library.
-			$path_arr = explode( '/', str_replace( $base_dir . '/sites' . '/', '', $path ) );
+			$path_arr = explode( '/', str_replace( $base_dir . '/sites/', '', $path ) );
 			if ( is_array( $path_arr ) && count( $path_arr ) > 1
-				 && is_numeric( $path_arr[1] ) && $path_arr[1] > 1900 && $path_arr[1] < 2100 // Contains the year sub folder.
+				&& is_numeric( $path_arr[1] ) && $path_arr[1] > 1900 && $path_arr[1] < 2100 // Contains the year sub folder.
 			) {
 				$skip = true;
 			}
@@ -1038,9 +1045,7 @@ class Dir extends Abstract_Module {
 		}
 
 		// Can be used to skip/include folders matching a specific directory path.
-		$skip = apply_filters( 'wp_smush_skip_folder', $skip, $path );
-
-		return $skip;
+		return apply_filters( 'wp_smush_skip_folder', $skip, $path );
 	}
 
 	/**
@@ -1093,7 +1098,7 @@ class Dir extends Abstract_Module {
 		while ( $continue ) {
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT path, image_size, orig_size FROM {$wpdb->prefix}smush_dir_images WHERE image_size IS NOT NULL ORDER BY `id` LIMIT %d, %d",
+					"SELECT path, image_size, orig_size FROM {$wpdb->base_prefix}smush_dir_images WHERE image_size IS NOT NULL ORDER BY `id` LIMIT %d, %d",
 					$offset,
 					$limit
 				),
@@ -1133,7 +1138,7 @@ class Dir extends Abstract_Module {
 		if ( ! empty( $this->stats ) && ! empty( $this->stats['orig_size'] ) ) {
 			$this->stats['bytes']   = ( $this->stats['orig_size'] > $this->stats['image_size'] ) ? $this->stats['orig_size'] - $this->stats['image_size'] : 0;
 			$this->stats['percent'] = number_format_i18n( ( ( $this->stats['bytes'] / $this->stats['orig_size'] ) * 100 ), 1 );
-			// Convert to human readable form.
+			// Convert to human-readable form.
 			$this->stats['human'] = size_format( $this->stats['bytes'], 1 );
 		}
 
@@ -1153,7 +1158,7 @@ class Dir extends Abstract_Module {
 	 */
 	private function last_scan_stats() {
 		global $wpdb;
-		$results = $wpdb->get_results( "SELECT id, image_size, orig_size FROM {$wpdb->prefix}smush_dir_images WHERE last_scan = (SELECT MAX(last_scan) FROM {$wpdb->prefix}smush_dir_images ) GROUP BY id", ARRAY_A ); // Db call ok; no-cache ok.
+		$results = $wpdb->get_results( "SELECT id, image_size, orig_size FROM {$wpdb->base_prefix}smush_dir_images WHERE last_scan = (SELECT MAX(last_scan) FROM {$wpdb->base_prefix}smush_dir_images ) GROUP BY id", ARRAY_A ); // Db call ok; no-cache ok.
 		$total   = count( $results );
 		$smushed = 0;
 		$stats   = array(
@@ -1263,7 +1268,7 @@ class Dir extends Abstract_Module {
 		// If not already checked, check.
 		$table_exist = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $wpdb->base_prefix . 'smush_dir_images' ) ) ); // Db call ok; no-cache ok.
 
-		self::$table_exist = $table_exist ? true : false;
+		self::$table_exist = (bool) $table_exist;
 
 		return self::$table_exist;
 	}

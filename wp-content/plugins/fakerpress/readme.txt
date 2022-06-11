@@ -2,9 +2,9 @@
 Contributors:      bordoni
 Tags:              generator, dummy content, dummy data, lorem ipsun, admin, exemples, testing, images, attachments, featured image, taxonomies, users, post type, faker, fake data, random, developer, dev, development, test, tests
 Requires at least: 4.7
-Tested up to:      5.9
+Tested up to:      5.9.1
 Requires PHP:      5.6
-Stable tag:        trunk
+Stable tag:        0.5.3
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://fakerpress.com/r/sponsor
@@ -98,6 +98,11 @@ Great! There are several ways you can get involved to help make FakerPress bette
 Thank you for wanting to make FakerPress better for everyone! [We salute you](https://www.youtube.com/watch?v=8fPf6L0XNvM).
 
 == Changelog ==
+
+= 0.5.3 &mdash; 04 of March 2022 =
+
+* Fix - Ensure Select2 usage of AJAX search properly encodes on all usages props @TheMMMdev
+* Fix - Ensure Select2 usage of AJAX properly checks for nonces and permissions props @TheMMMdev
 
 = 0.5.2 &mdash; 27 of January 2022 =
 

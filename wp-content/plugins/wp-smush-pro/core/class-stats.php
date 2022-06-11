@@ -605,8 +605,10 @@ class Stats {
 			}
 
 			$stats['count_images'] = 0;
-			foreach ( ( is_array( $smush_stats['sizes'] ) ? $smush_stats['sizes'] : array() ) as $image_stats ) {
-				$stats['count_images'] += $image_stats->size_before !== $image_stats->size_after ? 1 : 0;
+			if ( isset( $smush_stats['sizes'] ) && is_array( $smush_stats['sizes'] ) ) {
+				foreach ( $smush_stats['sizes'] as $image_stats ) {
+					$stats['count_images'] += $image_stats->size_before !== $image_stats->size_after ? 1 : 0;
+				}
 			}
 
 			$stats['count_supersmushed'] += ! empty( $smush_stats['stats'] ) && $smush_stats['stats']['lossy'] ? 1 : 0;

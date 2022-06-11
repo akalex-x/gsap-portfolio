@@ -9,7 +9,6 @@
 			<head>
 				<title>XML Sitemap</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-				<meta name="robots" content="noindex,follow" />
 				<style type="text/css">
 					body {
 						font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana;
@@ -64,7 +63,7 @@
 				<xsl:apply-templates></xsl:apply-templates>
 				<div id="footer">
 					Generated with <a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-home/" title="Google (XML) Sitemap Generator Plugin for WordPress">Google (XML) Sitemaps Generator Plugin for WordPress</a> by <a rel="external nofollow" href="http://www.arnebrachhold.de/">Arne Brachhold</a>. This XSLT template is released under the GPL and free to use.<br />
-					If you have problems with your sitemap please visit the <a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-x-faq/" title="Google (XML) sitemaps FAQ">plugin FAQ</a> or the <a rel="external nofollow" href="https://wordpress.org/support/plugin/google-sitemap-generator">support forum</a>.
+                    If you have problems with your sitemap please visit the <a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-x-faq/" title="Google (XML) sitemaps FAQ">plugin FAQ</a> or the <a rel="external nofollow" href="https://wordpress.org/support/plugin/google-sitemap-generator">support forum</a>.
 				</div>
 			</body>
 		</html>
@@ -76,7 +75,7 @@
         <div id="intro">
             <p>
                 This is a XML Sitemap which is supposed to be processed by search engines which follow the XML Sitemap standard like Ask.com, Bing, Google and Yahoo.<br />
-                It was generated using the <a rel="external nofollow" href="http://wordpress.org/">WordPress</a> content management system and the <strong><a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-home/" title="Google (XML) Sitemaps Generator Plugin for WordPress">Google Sitemap Generator Plugin</a></strong> by <a rel="external nofollow" href="http://www.arnebrachhold.de/">Arne Brachhold</a>.<br />
+                It was generated using the <a rel="external nofollow" href="http://wordpress.org/">WordPress</a> content management system and the <strong><a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-home/" title="Google (XML) Sitemaps Generator Plugin for WordPress">XML Sitemap Generator Plugin</a></strong> by <a rel="external nofollow" href="http://www.arnebrachhold.de/">Arne Brachhold</a>.<br />
                 You can find more information about XML sitemaps on <a rel="external nofollow" href="http://sitemaps.org">sitemaps.org</a> and Google's <a rel="external nofollow" href="http://code.google.com/p/sitemap-generators/wiki/SitemapGenerators">list of sitemap programs</a>.
             </p>
         </div>
@@ -124,7 +123,7 @@
         <div id="intro">
             <p>
                 This is a XML Sitemap which is supposed to be processed by search engines which follow the XML Sitemap standard like Ask.com, Bing, Google and Yahoo.<br />
-                It was generated using the <a rel="external nofollow" href="http://wordpress.org/">WordPress</a> content management system and the <strong><a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-home/" title="Google (XML) Sitemaps Generator Plugin for WordPress">Google Sitemap Generator Plugin</a></strong> by <a rel="external nofollow" href="http://www.arnebrachhold.de/">Arne Brachhold</a>.<br />
+                It was generated using the <a rel="external nofollow" href="http://wordpress.org/">WordPress</a> content management system and the <strong><a rel="external nofollow" href="http://www.arnebrachhold.de/redir/sitemap-home/" title="XML Sitemaps Generator Plugin for WordPress">XML Sitemap Generator Plugin</a></strong> by <a rel="external nofollow" href="http://www.arnebrachhold.de/">Arne Brachhold</a>.<br />
                 You can find more information about XML sitemaps on <a rel="external nofollow" href="http://sitemaps.org">sitemaps.org</a> and Google's <a rel="external nofollow" href="http://code.google.com/p/sitemap-generators/wiki/SitemapGenerators">list of sitemap programs</a>.<br />
                 <br />
                 This file contains links to sub-sitemaps, follow them to see the actual sitemap content.

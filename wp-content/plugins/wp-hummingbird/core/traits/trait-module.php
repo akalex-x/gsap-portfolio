@@ -8,7 +8,7 @@
  * @package Hummingbird\Core\Traits
  */
 
-namespace Hummingbird\Core\Traits;
+namespace Hummingbird\Core\Traits;		  			    		   	 	  
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
