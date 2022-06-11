@@ -448,7 +448,7 @@ function smoothScroll(content, viewport, smoothness) {
                 if( i == 2 ){
                     span.find('.word').addClass('serif');
                 }
-                if(word == '●'){
+                if(word.indexOf('●') >= 0 ){
                     span.find('.word').addClass('dotSymbol');
                 }
                 spanWords.push(span)
@@ -555,9 +555,18 @@ function smoothScroll(content, viewport, smoothness) {
         
         var $projectLinks = $('.projects .project a');
         var currentImage;
+        var reversed = true;
         
         function randomIntFromInterval(min, max) { // min and max included 
           return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+        
+        function reverseTimeline(tl){
+            if ( tl.reversed() ) {
+                tl.play();
+            } else {
+                tl.reverse();
+            }
         }
         
         $projectLinks.each(function(){
@@ -572,9 +581,22 @@ function smoothScroll(content, viewport, smoothness) {
             
             var $words = $this.find('.curtain');
             
-            var speed = (randomIntFromInterval(75, 125)/100);
+            var speed = (randomIntFromInterval(60, 90)/100);
+//            speed = .75;
+            if( reversed == true ){
+                reversed = false;
+            }else{
+                reversed = true;
+            }
                         
-            horizontalLoop($words, {paused: false,repeat:-1, speed:speed})
+            var loop = horizontalLoop($words, {paused: false,repeat:-1, speed:speed,reversed:reversed});
+            
+            $this.mouseenter(function(){
+                reverseTimeline(loop)
+            });
+            $this.mouseleave(function(){
+                reverseTimeline(loop)
+            });
             
         });
 		
