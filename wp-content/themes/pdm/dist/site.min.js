@@ -11,63 +11,45 @@ jQuery(document).ready(function ($) {
     var grainyBackground = (function(){
         var grainedOptions = {
             "animate": true,
-            "patternWidth": 400,
-            "patternHeight": 400,
-            "grainOpacity": 0.09,
-            "grainDensity": 2,
-            "grainWidth": 2,
-            "grainHeight": 2
-        }
-        var grainedOptions2 = {
-            "animate": true,
-            "patternWidth": 100,
-            "patternHeight": 100,
-            "grainOpacity": 0.09,
-            "grainDensity": 2,
-            "grainWidth": 2,
-            "grainHeight": 2
+            "patternWidth": 200,
+            "patternHeight": 200,
+            "grainOpacity": .1,
+            "grainDensity": 1,
+            "grainWidth": 1,
+            "grainHeight": 1
         }
         grained("#viewport", grainedOptions);
-//        grained("#grainy-vid", grainedOptions2);
     }()); 
 
     var LazyLoading = (function () {
-        
         var instance = new LazyLoad();
-
         function lazyBGImages() {
             var $bgImages = $('[data-bg]:not(.lazy)');
-            if (!$bgImages.length) { return; }
-
-            $bgImages.each(function () {
-                $(this).addClass('lazy');
-            });
-        }
-
-        function update() {
-            lazyBGImages();
+            if ($bgImages.length) {
+                $bgImages.each(function () {
+                    $(this).addClass('lazy');
+                });
+            }
             instance.update();
         }
-
+        function update() {
+            lazyBGImages();
+        }
         lazyBGImages();
-
         return {
             update: update
         }
-        
     }());
 
     //Global function to toggle simple accordions
     var Accordions = (function () {
         var $accordions = $('.accordion');
         if (!$accordions.length) { return; }
-
         $accordions.each(function () {
             if ($(this).hasClass('active')) {
                 $(this).find('.accordion__content').show();
             }
         });
-
         $accordions.find('.accordion__trigger').click(function (e) {
             var $this = $(this);
             var $accordion = $this.parent();
@@ -83,210 +65,49 @@ jQuery(document).ready(function ($) {
                 $content.slideDown('fast');
             }
         })
-
-    }());
-
-    var Forms = (function () {
-        var InputMasks = (function () {
-            var $masks = $('[data-mask]');
-            if (!$masks.length) { return; }
-
-            /**
-             * Key Codes:
-             * 8    - backspace
-             * 13   - enter
-             * 16   - shift
-             * 18   - alt
-             * 20   - caps
-             * 27   - esc
-             * 37   - left arrow
-             * 38   - up arrow
-             * 39   - right arrow
-             * 40   - down arrow
-             * 46   - delete
-             **/
-            var exclude_keys = [8, 13, 16, 18, 20, 27, 37, 38, 39, 40, 46];
-
-            $('[data-mask]').keyup(function (e) {
-                console.log(e.keyCode);
-                if (exclude_keys.indexOf(e.keyCode) > -1) { return; }
-
-                switch (this.dataset.mask) {
-                    case 'digits':
-                        var x = this.value.replace(/\D/g, '');
-                        this.value = x;
-                        break;
-                    case 'phone':
-                        var x = this.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-                        console.log(x);
-                        this.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-                        break;
-                    case 'ssn': {
-                        var x = this.value.replace(/\D/g, '').match(/^(\d{0,3})(\d{0,2})(\d{0,4})/);
-                        this.value = !x[2] ? x[1] : x[1] + '-' + x[2] + '-' + x[3];
-                    }
-                }
-            });
-        }());
-
-        //Plugin used for form validation
-        var parselyOptions = {
-            classHandler: function (parsleyField) {
-                var $element = parsleyField.$element;
-                if ($element.parent().hasClass('select-menu')) {
-                    return $element.parent();
-                }
-                return $element;
-            },
-            errorsContainer: function (parsleyField) {
-                var $element = parsleyField.$element;
-                var $fieldContainer = $element.closest('.form-field');
-                if ($fieldContainer) {
-                    return $fieldContainer;
-                }
-            }
-        };
-
-        //Global function to set form state classes
-        var formStates = (function () {
-            $formInputs = $('form :input');
-            if (!$formInputs.length) { return; }
-
-            $formSelectMenus = $('.select-menu select, .ginput_container_select select');
-
-            function isGFormInput($el) {
-                return $el.parent().hasClass('ginput_container') ? $el.parent().parent() : $el;
-            }
-
-            function setFilled($input) {
-                $input.addClass('filled');
-            }
-
-            function removeFilled($input) {
-                $input.removeClass('filled');
-            }
-
-            function setFocused() {
-                $(this).addClass('focused');
-            }
-
-            function removeFocused() {
-                $(this).removeClass('focused');
-            }
-
-            function checkInput(e) {
-                if (this.type == 'button' ||
-                    this.type == 'range' ||
-                    this.type == 'submit' ||
-                    this.type == 'radio' ||
-                    this.type == 'checkbox' ||
-                    this.type == 'reset') { return; }
-
-                var $this = $(this);
-                var $parent = $this.parent();
-                var is_selectMenu = $parent.hasClass('select-menu') || $parent.hasClass('ginput_container_select');
-
-                var $input = is_selectMenu ? $parent : $this;
-
-                switch (this.type) {
-                    case 'select-one':
-                    case 'select-multiple':
-                        if (this.value !== '') {
-                            setFilled($input);
-                        } else {
-                            removeFilled($input);
-                        }
-                        break;
-                    default:
-                        if (this.value !== '') {
-                            setFilled($input);
-                        } else {
-                            removeFilled($input);
-                        }
-                        break;
-                }
-            }
-
-            $formInputs.each(checkInput);
-            $formInputs.on('change', checkInput);
-            $formInputs.on('focus', setFocused);
-            $formInputs.on('blur', removeFocused);
-            $formSelectMenus.on('focus', setFocused);
-            $formSelectMenus.on('blur', removeFocused);
-
-        }());
     }());
 
     //Global function top open / close lightboxes
     var PDMLightbox = (function () {
-
-        var $body = $('body');
         //Lightbox reset - This lightbox is empty and present on all pages
         var $lightbox = $('.pdm-lightbox--reset');
-
         //it's content can be filled from various sources
         //after close, the content is wiped
         var $lightbox_content = $('.pdm-lightbox--reset .pdm-lightbox__content');
-
-        $body.on('click', '[data-lightbox-iframe],[data-lightbox-content],[data-lightbox-target]', function (e) {
-
+        $('body').on('click', '[data-lightbox-iframe],[data-lightbox-content],[data-lightbox-target],.lightbox-trigger', function (e) {
             e.preventDefault();
-
-            var classes = $(this).data('lightbox-classes');
             var iframe = $(this).data('lightbox-iframe');
-            var blur = $(this).data('lightbox-blur');
-
             if (iframe) {
-
-                var youtubePattern = /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/g;
-                var vimeoPattern = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/g;
-
+                var youtubePattern = /(?:http?s?:\/\/)?(?:www\.)?youtu(be\.com\/|\.be\/)(embed\/(.+)(\?.+)?|watch\?v=(.+)(\&.+)?)/g;
+                var vimeoPattern = /(?:http?s?:\/\/)?:\/\/(www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)/g;
                 if (youtubePattern.test(iframe)) {
-
                     classes += ' youtube-vid'
-
-                    replacement = '<div class="spacer"><iframe width="560" height="315" frameborder="0" allowfullscreen src="//www.youtube.com/embed/$1?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3" /></div>';
-
+                    replacement = '<div class="spacer"><iframe width="560" height="315" frameborder="0" allowfullscreen src="//www.youtube.com/embed/$3?rel=0&autoplay=1&modestbranding=1&iv_load_policy=3" /></div>';
                     iframe = iframe.replace(youtubePattern, replacement);
-
                 }
-
                 if (vimeoPattern.test(iframe)) {
-
                     classes += ' vimeo-vid'
-
-                    replacement = '<div class="spacer"><iframe width="560" height="315" frameborder="0" allowfullscreen src="//player.vimeo.com/video/$1?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3" /></div>';
-
+                    replacement = '<div class="spacer"><iframe width="560" height="315" frameborder="0" allowfullscreen src="//player.vimeo.com/video/$3?rel=0&autoplay=1&modestbranding=1&iv_load_policy=3" /></div>';
                     iframe = iframe.replace(vimeoPattern, replacement);
-
                 }
-
-                $lightbox_content.html('<div class="iframe-wrap">' + iframe + '</div>');
-
+                $lightbox_content.html('<div class="video-embed">' + iframe + '</div>');
             } else {
                 if ($(this).data('lightbox-content')) {
                     var content = $(this).data('lightbox-content');
                 } else if ($(this).data('lightbox-target')) {
                     var target = $(this).data('lightbox-target');
                     var content = $('#' + target).html();
+                } else {
+                    var content = $(this).next('.lightbox-content').html();
                 }
                 $lightbox_content.html(content);
             }
-
-            if (blur != false) {
-                $body.addClass('blur');
-            }
-
+            var classes = $(this).data('lightbox-classes');
             $lightbox.addClass('active').addClass(classes);
-
         });
-
-        function closeLightbox($lightbox) {
+        function closeModal($lightbox) {
             $lightbox.removeClass('active');
-            $('body').removeClass('no-scroll');
-            setTimeout(function () {
-                $body.removeClass('blur');
-            }, 250);
+            $('body').removeClass('noScroll');
             //wait before removing classes till lightbox closses
             if ($lightbox.hasClass('pdm-lightbox--reset')) {
                 setTimeout(function () {
@@ -295,21 +116,26 @@ jQuery(document).ready(function ($) {
                 }, 750);
             }
         }
-
+        function openModal($lightbox) {
+            $lightbox.addClass('active');
+            $('body').addClass('noScroll');
+        }
+        function updateModal($lightbox, $content) {
+            $lightbox.find('.pdm-lightbox__content').html($content);
+        }
         $('.pdm-lightbox').on('click', function (e) {
-            var $lightbox = $(this);
             if (e.target == this) {
-                closeLightbox($lightbox);
+                closeModal($(this));
             }
         });
-
         $('.pdm-lightbox__close').click(function (e) {
             e.stopPropagation();
-            $lightbox = $(this).closest('.pdm-lightbox');
-            closeLightbox($lightbox);
+            closeModal($(this).closest('.pdm-lightbox'));
         });
         return {
-            close: closeLightbox
+            close: closeModal,
+            open: openModal,
+            update: updateModal
         };
     }());
 	
@@ -493,30 +319,11 @@ jQuery(document).ready(function ($) {
 		});
 		
 	}());
-	
-	var homeHero = (function(){
-        
-        var $el = $('.centered-hero__content h1');
+    
+    function splitWords($el){
         var sentence = $el.text();
         var words = sentence.split(' ');
         var spanWords = [];
-
-//        $(words).each(function (i, word) {
-//            if ($.trim(word).length) {
-//                
-//                word = word;
-//                var span = $('<span class="curtain">');
-//                span.append('<span class="word>');
-//                
-//                if( i == 2 ){
-//                    span.find('.word').addClass('serif');
-//                }
-//                
-//                span.find('.word').text(word).prepend('\xA0');
-//                spanWords.push(span)
-//                
-//            }
-//        });
         
         $(words).each(function (i, word) {
             if ($.trim(word).length) {
@@ -530,12 +337,21 @@ jQuery(document).ready(function ($) {
                 spanWords.push(span)
             }
         });
-        
 
         $el.html(spanWords)
+    }
+	
+	var homeHero = (function(){
+        
+        var $hero = $('.centered-hero');
+        
+        if( !$hero.length ){ return; }
+        
+        var $heading = $hero.find('h1');
+
+        splitWords($heading);
 		
         var mtl = gsap.timeline({
-//            paused:true,
             repeat:false,
             defaults: {
                 duration: 1,
@@ -573,6 +389,12 @@ jQuery(document).ready(function ($) {
 			ease: Power2.easeInOut,
 		},'reveal2');
         
+        mtl.to('.centered-hero__reveal',{
+            backgroundColor: 'transparent',
+			duration:0,
+		});
+        
+        
         var video3D = (function(){
             
             var request = null;
@@ -607,6 +429,83 @@ jQuery(document).ready(function ($) {
         }());
 		
 	}());
+    
+    var projects = (function(){
+        
+        var $projects = $('.projects .project');
+        
+        if( !$projects.length ){ return; }
+        
+        var $projectLinks = $('.projects .project a');
+        var currentImage;
+        
+        $projectLinks.each(function(){
+            
+            var $this = $(this);
+            
+            splitWords($this);
+            
+            var clone = $this.clone();
+            $(clone).find('.curtain').addClass('clone');
+            $this.append($(clone).html());
+            
+            var $words = $this.find('.curtain');
+            
+            horizontalLoop($words, {paused: false,repeat:-1})
+            
+        });
+		
+		$projects.mouseleave(function(){
+			$('.alt-cursor .portfolio-cursor').css('visibility', 'hidden');
+			$('.alt-cursor .basic').show();
+		});
+        
+        $projects.mouseenter(function() {
+            
+			$('.alt-cursor .basic').hide();
+			$('.alt-cursor .portfolio-cursor').css('visibility', 'visible');
+			
+			var hoverImage = $(this).data('image');
+			
+			if( hoverImage == currentImage ){ return; }
+			
+			currentImage = hoverImage;
+            
+            var props = {
+                parent: document.querySelector('.alt-cursor .portfolio-cursor .positioner'),
+                intensity: 0.2,
+                displacementImage: 'https://powerdigitalmarketing.com/wp-content/uploads/2021/12/diss.png',
+                imagesRatio: 683 / 1024,
+                hover:false,
+            }
+			
+			if( $('.alt-cursor .portfolio-cursor canvas').length ){
+				
+				var removeEl = $('.alt-cursor .portfolio-cursor canvas');
+                
+                props['image1'] = currentImage;
+                props['image2'] = hoverImage;
+				
+				var currentPort = new hoverEffect(props);
+				
+				setTimeout(function() {
+					removeEl.remove();
+					currentPort.next();
+				}, 100);
+				
+			}else{
+                
+                props['image1'] = hoverImage;
+                props['image2'] = hoverImage;
+				
+				new hoverEffect(props);
+				
+			}
+
+
+		});
+        
+    }());
 	
 	
 //	var smoothScroll = (function () {

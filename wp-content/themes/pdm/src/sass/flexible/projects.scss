@@ -1,0 +1,41 @@
+.projects{
+    padding-left: 0;
+    padding-right: 0;
+    ul{
+        margin: 0;
+        li{
+            padding: 0;
+            border-top: 1px solid $white;
+            margin: 0;
+            &:last-of-type{
+                border-bottom: 1px solid $white;
+            }
+            &:before{
+                content: none;
+            }
+            a{
+                display: flex;
+                width: 100%;
+                color: $white;
+                font-family: $display;
+                text-transform: uppercase;
+                font-size: 6vw;
+                &:hover{
+                    text-decoration: none;
+                    color: $primary;
+                }
+                .curtain{
+                    display: block;
+                    span{
+                        display: block;
+                    }
+                    &.clone{
+                        color: transparent;
+                        -webkit-text-stroke-color: $white;
+                        -webkit-text-stroke-width: .02em;
+                    }
+                }
+            }
+        }
+    }
+}
