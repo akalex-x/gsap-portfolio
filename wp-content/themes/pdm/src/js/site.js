@@ -334,6 +334,9 @@ jQuery(document).ready(function ($) {
                 if( i == 2 ){
                     span.find('.word').addClass('serif');
                 }
+                if(word == '●'){
+                    span.find('.word').addClass('dotSymbol');
+                }
                 spanWords.push(span)
             }
         });
@@ -439,6 +442,10 @@ jQuery(document).ready(function ($) {
         var $projectLinks = $('.projects .project a');
         var currentImage;
         
+        function randomIntFromInterval(min, max) { // min and max included 
+          return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+        
         $projectLinks.each(function(){
             
             var $this = $(this);
@@ -451,7 +458,9 @@ jQuery(document).ready(function ($) {
             
             var $words = $this.find('.curtain');
             
-            horizontalLoop($words, {paused: false,repeat:-1})
+            var speed = (randomIntFromInterval(75, 125)/100);
+                        
+            horizontalLoop($words, {paused: false,repeat:-1, speed:speed})
             
         });
 		
@@ -504,6 +513,30 @@ jQuery(document).ready(function ($) {
 
 
 		});
+        
+    }());
+    
+    var loopBtns = (function(){
+        
+        var $btns = $('.loop-btn');
+        
+        if( !$btns.length ){ return; }
+                
+        $btns.each(function(){
+            
+            var $this = $(this);
+            
+            splitWords($this);
+            
+            var clone = $this.clone();
+            $(clone).find('.curtain').addClass('clone');
+            $this.append($(clone).html());
+            
+            var $words = $this.find('.curtain');
+            
+            horizontalLoop($words, {paused: false,repeat:-1, speed:.25})
+            
+        });
         
     }());
 	

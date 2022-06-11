@@ -47,6 +47,9 @@
             </a>
         </li>
     </ul>
+    <div class="container projects__cta">
+        <a href="" class="loop-btn">See All Projects &#9679;</a>
+    </div>
 </section>
 
 <?php get_footer(); ?>

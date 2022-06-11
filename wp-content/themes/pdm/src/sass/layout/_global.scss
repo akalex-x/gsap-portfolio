@@ -528,3 +528,27 @@ button.reset{
         }
     }
 }
+
+.loop-btn{
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    border-bottom: 1px solid $white;
+    color: $white;
+    text-transform: uppercase;
+    font-family: $display;
+    width: 250px;
+    overflow: hidden;
+    font-size: .9rem;
+    padding-bottom: .25rem;
+    .dotSymbol{
+        color: $primary;
+    }
+    .curtain{
+        white-space: nowrap;
+    }
+    &:hover{
+        text-decoration: none;
+        border-color: $primary;
+    }
+}
