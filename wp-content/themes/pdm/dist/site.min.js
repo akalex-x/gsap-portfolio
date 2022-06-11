@@ -675,6 +675,30 @@ function smoothScroll(content, viewport, smoothness) {
         });
         
     }());
+    
+    var parallaxItems = (function(){
+        
+        $parallax = $('.parallax-item');
+        
+        if( !$parallax.length ){ return; }
+        
+        document.addEventListener("mousemove", parallax);
+        
+        function parallax(event) {
+
+            $parallax.each(function(){
+
+                var $this = $(this);
+                var position = $this[0].getAttribute("value");
+                var x = (window.innerWidth - event.pageX * position) / 90;
+                var y = (window.innerHeight - event.pageY * position) / 90;
+                $this[0].style.transform = 'translateX('+x+'px) translateY('+y+'px)';
+
+            });
+
+        }
+
+    }());
 	
 	var resizeEvent = window.document.createEvent('UIEvents'); 
 	resizeEvent.initUIEvent('resize', true, false, window, 0); 
