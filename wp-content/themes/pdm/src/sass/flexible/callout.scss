@@ -1,0 +1,40 @@
+.callout{
+    &__content{
+        .placeholder,
+        h2,
+        p{
+            font-size: 2rem;
+            font-family: $display;
+            color: $white;
+            display: inline;
+            text-transform: uppercase;
+            line-height: 1.25;
+            .color{
+                color: $primary;
+            }
+            .stroke{
+                color: transparent;
+                -webkit-text-stroke-color: $white;
+                -webkit-text-stroke-width: .02em;
+            }
+            .serif{
+                font-family: $serif;
+                letter-spacing: .05em;
+            }
+        }
+    }
+    @media (min-width:960px){
+        .container{
+            max-width: none;
+        }
+        &__content{
+            max-width: 75vw;
+            .placeholder,
+            h2,
+            p{
+                font-size: 4.5vw;
+                line-height: 1.1;
+            }
+        }
+    }
+}
