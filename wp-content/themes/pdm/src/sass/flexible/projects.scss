@@ -26,7 +26,17 @@
                 font-size: 6vw;
                 &:hover{
                     text-decoration: none;
-                    color: $primary;
+                    .curtain{
+                        .dotSymbol{
+                            color: $primary;
+                        }
+                        &.clone{
+                            .dotSymbol{
+                                color: transparent;
+                                -webkit-text-stroke-color: $primary;
+                            }
+                        }
+                    }
                 }
                 .curtain{
                     white-space: nowrap;
