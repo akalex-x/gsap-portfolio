@@ -10,7 +10,7 @@
 ?>
 
 <article class="post-card">
-    <a class="post-card__thumb" href="<?php echo $permalink; ?>">
+    <a class="post-card__thumb" href="<?php echo $permalink; ?>" draggable="false">
         <div class="positioner"><?php echo $feat_img; ?></div>
     </a>
     <div class="post-card__content">

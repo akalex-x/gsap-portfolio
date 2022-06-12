@@ -67,4 +67,30 @@
     </div>
 </section>
 
+<?php
+    $args = array(
+        'post_type' => 'post',
+        'post_parent' => 0,
+        'showposts' => 6,
+    );
+    $the_query = new WP_Query( $args );
+?>
+
+<section class="latest-posts">
+    
+    <div class="latest-posts__intro">
+        <h2><span>More about</span> what I do.</h2>
+        <a class="loop-btn" href="/blog/">View All Posts &#9679;</a>
+    </div>
+
+    <div class="latest-posts__loop simple-slider" draggable="false">
+        <?php if( $the_query->have_posts() ){ ?>
+            <?php while( $the_query->have_posts() ){  $the_query->the_post(); ?>
+                <?php get_template_part('lib/parts/post-card'); ?>
+            <?php } ?>
+        <?php } ?>
+    </div>
+        
+</section>
+
 <?php get_footer(); ?>

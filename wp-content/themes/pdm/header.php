@@ -41,6 +41,21 @@
     
     <script>var ajaxURL = "<?php echo esc_url( home_url( '/' ) ) . 'wp-admin/admin-ajax.php' ?>";</script>
     <?php echo get_field('head_scripts', 'option'); ?>
+    
+    <script>
+        var refreshSmooth = (function(){
+            var resizeEvent = window.document.createEvent('UIEvents');
+            resizeEvent.initUIEvent('resize', true, false, window, 0);
+            function init(){
+                window.dispatchEvent(resizeEvent);
+            }
+            init();
+            return {
+                init:init
+            }
+        }());
+    </script>
+    
 </head>
 
 <body id="top" <?php body_class(); ?>>

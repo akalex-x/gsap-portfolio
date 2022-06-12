@@ -50,6 +50,7 @@ main{
                 .curtain{
                     white-space: nowrap;
                     display: block;
+                    will-change: transform;
                     span{
                         display: block;
                     }

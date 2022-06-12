@@ -14,6 +14,7 @@
     }
     &__video{
         display: none;
+        will-change: transform;
         position: absolute;
         top: 0;
         left: 0;

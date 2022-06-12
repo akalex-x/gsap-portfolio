@@ -439,6 +439,7 @@ button.reset{
 	position: fixed;
 	z-index: 9;
 	pointer-events: none;
+    will-change: transform;
 	.basic{
 		border-radius: 50%;
 		width: 50px;
@@ -531,7 +532,7 @@ button.reset{
     color: $white;
     text-transform: uppercase;
     font-family: $display;
-    width: 250px;
+    width: 200px;
     overflow: hidden;
     font-size: .9rem;
     padding-bottom: .25rem;
@@ -539,6 +540,7 @@ button.reset{
         color: $primary;
     }
     .curtain{
+        will-change: transform;
         white-space: nowrap;
     }
     &:hover{

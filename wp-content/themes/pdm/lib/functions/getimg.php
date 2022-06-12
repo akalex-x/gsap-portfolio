@@ -69,6 +69,7 @@ function getIMG($id, $size = "post", $return_src = false, $img_attr = array()) {
 			$attr['data-srcset'] = $str_srcset;
 			$attr['loading'] = false;
 			$attr['class'] = 'lazy';
+			$attr['draggable'] = 'false';
 		}
 
 		return wp_get_attachment_image( $id, $size, false, $attr );
