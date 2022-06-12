@@ -12,32 +12,33 @@
 
     $post_id = $isBlog ? get_option('page_for_posts') : get_the_ID();
     $post_type = $isPTArchive ? 'cpt_' . get_post_type() : get_post_type();
-    $site_logo = getIMG( get_field('site_logo', 'option'), 'thumb', false, array('alt' => get_bloginfo( 'name' ), 'lazy' => false));
-    $site_favicon = get_field('site_favicon', 'option');
 ?>
 
 <!doctype html>
 <html class="no-js" <?php language_attributes(); ?>>
 
 <head>
-    <title><?php wp_title( '|', true, 'right' ); bloginfo('blog_name'); ?></title>
+       
     <meta charset="<?php bloginfo( 'charset' ); ?>" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
-    <?php if($isSingle && $post_type == 'post'): ?>
-    <meta property="og:image" content="<?php echo get_the_post_thumbnail_url($post_id,'hero'); ?>" />
-    <?php endif; ?>
-    <?php if(!empty($site_favicon)): ?>
-    <link rel="shortcut icon" href="<?php echo $site_favicon['url']; ?>" type="<?php echo $site_favicon['mime_type']; ?>" />
-    <?php endif; ?>
     
+    <?php if($isSingle && $post_type == 'post'){ ?>
+        <meta property="og:image" content="<?php echo get_the_post_thumbnail_url($post_id,'hero'); ?>" />
+    <?php }else{ ?>
+    <?php } ?>
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_template_directory_uri(); ?>/dist/favi/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo get_template_directory_uri(); ?>/dist/favi/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo get_template_directory_uri(); ?>/dist/favi/favicon-16x16.png">
+    <link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/dist/favi/site.webmanifest">
+    <link rel="mask-icon" href="<?php echo get_template_directory_uri(); ?>/dist/favi/safari-pinned-tab.svg" color="#ff4b00">
+    <meta name="msapplication-TileColor" content="#ff4b00">
+    <meta name="theme-color" content="#ff4b00">
+
     <?php wp_head(); ?>
     
-<!--    <link rel="preconnect" href="https://fonts.googleapis.com">-->
-<!--	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>-->
-<!--	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet"> -->
-
     <script>var ajaxURL = "<?php echo esc_url( home_url( '/' ) ) . 'wp-admin/admin-ajax.php' ?>";</script>
     <?php echo get_field('head_scripts', 'option'); ?>
 </head>

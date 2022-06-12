@@ -43,117 +43,135 @@ jQuery(document).ready(function ($) {
     
     
     // this is the helper function that sets it all up. Pass in the content <div> and then the wrapping viewport <div> (can be the elements or selector text). It also sets the default "scroller" to the content so you don't have to do that on all your ScrollTriggers.
-function smoothScroll(content, viewport, smoothness) {
-	content = gsap.utils.toArray(content)[0];
-	smoothness = smoothness || 1;
+    function smoothScroll(content, viewport, smoothness) {
+        content = gsap.utils.toArray(content)[0];
+        smoothness = smoothness || 1;
 
-	gsap.set(viewport || content.parentNode, { overflow: "hidden", position: "fixed", height: "100%", width: "100%", top: 0, left: 0, right: 0, bottom: 0 });
-	gsap.set(content, { overflow: "visible", width: "100%" });
+        gsap.set(viewport || content.parentNode, { overflow: "hidden", position: "fixed", height: "100%", width: "100%", top: 0, left: 0, right: 0, bottom: 0 });
+        gsap.set(content, { overflow: "visible", width: "100%" });
 
-	var getProp = gsap.getProperty(content),
-	    setProp = gsap.quickSetter(content, "y", "px"),
-	    setScroll = ScrollTrigger.getScrollFunc(window),
-	    removeScroll = function removeScroll() {
-		return content.style.overflow = "visible";
-	},
-	    killScrub = function killScrub(trigger) {
-		var scrub = trigger.getTween ? trigger.getTween() : gsap.getTweensOf(trigger.animation)[0]; // getTween() was added in 3.6.2
-		scrub && scrub.kill();
-		trigger.animation.progress(trigger.progress);
-	},
-	    height = void 0,
-	    isProxyScrolling = void 0;
+        var getProp = gsap.getProperty(content),
+            setProp = gsap.quickSetter(content, "y", "px"),
+            setScroll = ScrollTrigger.getScrollFunc(window),
+            removeScroll = function removeScroll() {
+            return content.style.overflow = "visible";
+        },
+            killScrub = function killScrub(trigger) {
+            var scrub = trigger.getTween ? trigger.getTween() : gsap.getTweensOf(trigger.animation)[0]; // getTween() was added in 3.6.2
+            scrub && scrub.kill();
+            trigger.animation.progress(trigger.progress);
+        },
+            height = void 0,
+            isProxyScrolling = void 0;
 
-	function refreshHeight() {
-		height = content.clientHeight;
-		content.style.overflow = "visible";
-		document.body.style.height = height + "px";
-		return height - document.documentElement.clientHeight;
-	}
-	
-	ScrollTrigger.addEventListener("refresh", function () {
-		removeScroll();
-		requestAnimationFrame(removeScroll);
-	});
-	
-	ScrollTrigger.defaults({ scroller: content });
-	
-	ScrollTrigger.scrollerProxy(content, {
-		scrollTop: function scrollTop(value) {
-			if (arguments.length) {
-				isProxyScrolling = true; // otherwise, if snapping was applied (or anything that attempted to SET the scroll proxy's scroll position), we'd set the scroll here which would then (on the next tick) update the content tween/ScrollTrigger which would try to smoothly animate to that new value, thus the scrub tween would impede the progress. So we use this flag to respond accordingly in the ScrollTrigger's onUpdate and effectively force the scrub to its end immediately.
-				setProp(-value);
-				setScroll(value);
-				return;
-			}
-			return -getProp("y");
-		},
+        function refreshHeight() {
+            height = content.clientHeight;
+            content.style.overflow = "visible";
+            document.body.style.height = height + "px";
+            return height - document.documentElement.clientHeight;
+        }
 
-		scrollHeight: function scrollHeight() {
-			return document.body.scrollHeight;
-		},
-		getBoundingClientRect: function getBoundingClientRect() {
-			return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
-		}
-	});
+        ScrollTrigger.addEventListener("refresh", function () {
+            removeScroll();
+            requestAnimationFrame(removeScroll);
+        });
 
-	return ScrollTrigger.create({
-		animation: gsap.fromTo(content, { y: 0 }, {
-			y: function y() {
-				return document.documentElement.clientHeight - height;
-			},
-			ease: "none",
-			onUpdate: ScrollTrigger.update
-		}),
-		scroller: window,
-		invalidateOnRefresh: true,
-		start: 0,
-		end: refreshHeight,
-		refreshPriority: -999,
-		scrub: smoothness,
-		onUpdate: function onUpdate(self) {
-			if (isProxyScrolling) {
-				killScrub(self);
-				isProxyScrolling = false;
-			}
-		},
-		onRefresh: killScrub // when the screen resizes, we just want the animation to immediately go to the appropriate spot rather than animating there, so basically kill the scrub.
-	});
-	
-}
+        ScrollTrigger.defaults({ scroller: content });
+
+        ScrollTrigger.scrollerProxy(content, {
+            scrollTop: function scrollTop(value) {
+                if (arguments.length) {
+                    isProxyScrolling = true; // otherwise, if snapping was applied (or anything that attempted to SET the scroll proxy's scroll position), we'd set the scroll here which would then (on the next tick) update the content tween/ScrollTrigger which would try to smoothly animate to that new value, thus the scrub tween would impede the progress. So we use this flag to respond accordingly in the ScrollTrigger's onUpdate and effectively force the scrub to its end immediately.
+                    setProp(-value);
+                    setScroll(value);
+                    return;
+                }
+                return -getProp("y");
+            },
+
+            scrollHeight: function scrollHeight() {
+                return document.body.scrollHeight;
+            },
+            getBoundingClientRect: function getBoundingClientRect() {
+                return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+            }
+        });
+
+        return ScrollTrigger.create({
+            animation: gsap.fromTo(content, { y: 0 }, {
+                y: function y() {
+                    return document.documentElement.clientHeight - height;
+                },
+                ease: "none",
+                onUpdate: ScrollTrigger.update
+            }),
+            scroller: window,
+            invalidateOnRefresh: true,
+            start: 0,
+            end: refreshHeight,
+            refreshPriority: -999,
+            scrub: smoothness,
+            onUpdate: function onUpdate(self) {
+                if (isProxyScrolling) {
+                    killScrub(self);
+                    isProxyScrolling = false;
+                }
+            },
+            onRefresh: killScrub // when the screen resizes, we just want the animation to immediately go to the appropriate spot rather than animating there, so basically kill the scrub.
+        });
+
+    }
     
 	var smoothScroll = (function () {
 
-		var $container = $("#scroll-container")[0];
-		
-		smoothScroll($container);
-        
-//		function goToSection(section) {
-//			var offset = gsap.getProperty($container[0], "y");
-//			var nextPosition = section[0].getBoundingClientRect().top - offset;
-//			gsap.to(window, { scrollTo: nextPosition, ease: "power4",  overwrite: true}) ;
-//		}
-		
-//		$('.next-section-trigger').click(function(){
-//			
-//			var $this = $(this);
-//			var $parent;
-//			
-//			if( $this.closest('.pin-spacer').length ){
-//				$parent = $(this).closest('.pin-spacer');
-//			}else{
-//				$parent = $(this).closest('section');
-//			}
-//			
-//			var $nextSection = $parent.next();
-//			var offset = gsap.getProperty($container[0], "y");
-//			var nextPosition = $nextSection[0].getBoundingClientRect().top - offset;
-//			
-//			gsap.to(window, { scrollTo: nextPosition, ease: "power4", overwrite: true });
-//			
-//		});
+        if( $(window).width() >= 960 ){
+            var $container = $("#scroll-container")[0];
+            smoothScroll($container);
+        }
 		
 	}());
+    
+    function goToSection(section,space) {
+        
+        if( $(window).width() >= 960 ){
+
+            space = space || 0;
+
+            if ( space && space.indexOf('%') >= 0){
+                space = space.replace('%','');
+                space = ($(window).height() / 100) * space;
+            }
+
+            var $container = $("#scroll-container");
+            var offset = gsap.getProperty($container[0], "y");
+            var nextPosition = section[0].getBoundingClientRect().top - offset - space;
+            gsap.to(window, { scrollTo: nextPosition, ease: "power4",  overwrite: true});
+            
+        }else{
+            $('html, body').stop().animate({
+				'scrollTop': section.offset().top - $('header').outerHeight()
+			}, 1200, 'swing');
+        }
+        
+    }
+    
+    var goToBtn = (function(){
+        
+        var $btns = $('[data-scrollto]');
+        
+        if (!$btns.length) { return; }
+
+        $btns.click(function(){
+            
+            var target = $(this).data('scrollto');
+            
+            if( $(target).length ){
+                goToSection($(target));
+            }
+            
+        });
+        
+    }());
 
     //Global function to toggle simple accordions
     var Accordions = (function () {
@@ -423,7 +441,8 @@ function smoothScroll(content, viewport, smoothness) {
 				y: y,
 				scale: 1,
 				opacity: 1,
-				duration: .75
+				duration: .5,
+//                scrub:1,
 			});
 			
 		};
@@ -464,6 +483,12 @@ function smoothScroll(content, viewport, smoothness) {
         
         if( !$hero.length ){ return; }
         
+        if (window.location.hash) { setTimeout(function () { window.scrollTo(0, 0); }, 2); }
+        
+        if( $(window).width() < 960 ){
+            $hero.css({ 'min-height': $(window).height() });
+        }
+        
         var $heading = $hero.find('h1');
 
         splitWords($heading);
@@ -475,6 +500,8 @@ function smoothScroll(content, viewport, smoothness) {
             }
         });
         
+        $('body').addClass('no-scroll');
+        
         mtl.to('.centered-hero__content .word',{
             y:0,
             opacity:1,
@@ -482,6 +509,15 @@ function smoothScroll(content, viewport, smoothness) {
             stagger:.15,
 			ease: Power2.easeInOut,
 		});
+        
+        mtl.to('.centered-hero__content button',{
+            y:0,
+            opacity:1,
+            duration: 1,
+            stagger:.15,
+			ease: Power2.easeInOut,
+            onComplete: function(){ $('body').removeClass('no-scroll'); },
+		},'reveal');
         
         mtl.to('.centered-hero__reveal',{
             opacity:1,
@@ -511,6 +547,19 @@ function smoothScroll(content, viewport, smoothness) {
 			duration:0,
 		});
         
+        var $projects = $('.projects');
+        
+        ScrollTrigger.create({
+            trigger: $hero,
+            start: 'bottom bottom-=50px',
+            endTrigger: $projects,
+            end: 'top top',
+//            markers:true,
+//            onEnter: function(){ if( $(window).width() >= 960 ){ goToSection( $projects, '-10' ); } },
+            onEnterBack: function(){ if( $(window).width() >= 960 ){ goToSection( $hero ); } },
+            onEnter: function(){ goToSection( $projects, '-10' ); },
+//            onEnterBack: function(){ goToSection( $hero ); },
+        });
         
         var video3D = (function(){
             
@@ -561,11 +610,15 @@ function smoothScroll(content, viewport, smoothness) {
           return Math.floor(Math.random() * (max - min + 1) + min)
         }
         
-        function reverseTimeline(tl){
-            if ( tl.reversed() ) {
-                tl.play();
+        function pauseTimeline(tl){
+            if ( tl.paused() ) {
+                if( tl.reversed() ){
+                    tl.reverse();
+                }else{
+                    tl.play();
+                }
             } else {
-                tl.reverse();
+                tl.pause();
             }
         }
         
@@ -575,14 +628,16 @@ function smoothScroll(content, viewport, smoothness) {
             
             splitWords($this);
             
-            var clone = $this.clone();
-            $(clone).find('.curtain').addClass('clone');
-            $this.append($(clone).html());
+            if( $(window).width() >= 960 ){
+                var clone = $this.clone();
+                $(clone).find('.curtain').addClass('clone');
+                $this.append($(clone).html());
+            }
             
             var $words = $this.find('.curtain');
             
-            var speed = (randomIntFromInterval(60, 90)/100);
-//            speed = .75;
+            var speed = (randomIntFromInterval(25, 50)/100);
+            speed = .5;
             if( reversed == true ){
                 reversed = false;
             }else{
@@ -592,10 +647,10 @@ function smoothScroll(content, viewport, smoothness) {
             var loop = horizontalLoop($words, {paused: false,repeat:-1, speed:speed,reversed:reversed});
             
             $this.mouseenter(function(){
-                reverseTimeline(loop)
+                pauseTimeline(loop)
             });
             $this.mouseleave(function(){
-                reverseTimeline(loop)
+                pauseTimeline(loop)
             });
             
         });

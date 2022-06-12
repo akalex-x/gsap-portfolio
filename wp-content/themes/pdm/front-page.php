@@ -14,7 +14,7 @@
     
     <div class="centered-hero__content">
         <h1>Tailored digital <span>experiences</span> for your brand.</h1>
-        <button class="reset arrow-button" data-scrollTo=""><span class="circle"></span><?php echo getSVG('down-arrow'); ?></button>
+        <button class="reset arrow-button" data-scrollto=".projects"><span class="circle"></span><?php echo getSVG('down-arrow'); ?></button>
     </div>
     
 </section>

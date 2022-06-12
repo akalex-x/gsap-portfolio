@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 9rem;
     &__reveal{
         background-color: $primary;
         position: absolute;
@@ -74,11 +75,13 @@
             margin-top: -1.5em;
             position:relative;
             z-index: 1;
+            transform: translateY(100%);
+            opacity: 0;
         }
     }
     
     @media only screen and (min-width:960px){
-        
+        min-height: 100vh;
         &__video{
             display: flex;
             height: 86%;
