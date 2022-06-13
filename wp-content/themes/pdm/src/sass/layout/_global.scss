@@ -522,6 +522,13 @@ button.reset{
             height: 2.5rem;
         }
     }
+    &--right{
+        .svg-icon--down-arrow{
+            transform: rotate(-90deg);
+            top: .25em;
+            left: .5em;
+        }
+    }
 }
 
 .loop-btn{

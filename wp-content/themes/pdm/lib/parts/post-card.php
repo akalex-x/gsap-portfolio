@@ -27,5 +27,6 @@
     </a>
     <div class="post-card__content">
         <h3><a href="<?php echo $permalink; ?>"><?php the_title(); ?></a></h3>
+        <a class="arrow-button arrow-button--right" href="<?php echo $permalink; ?>"><span class="circle"></span><?php echo getSVG('down-arrow'); ?></a>
     </div>
 </article>

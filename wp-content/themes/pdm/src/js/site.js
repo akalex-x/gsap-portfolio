@@ -774,6 +774,40 @@ jQuery(document).ready(function ($) {
             pageDots: false
         });
         
+        var $posts = $('.latest-posts__loop').find('.post-card');
+        var $postsImage = $posts.find('.post-card__thumb');
+        var $postsContent = $posts.find('.post-card__content');
+        
+        ScrollTrigger.matchMedia({
+            "(min-width: 960px)": function () {
+
+                gsap.to($postsImage, {
+                    clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+                    stagger:.1,
+                    duration:.5,
+                    scrollTrigger: {
+                        trigger: $slider,
+                        start: 'top center+=20%',
+                        markers:true,
+                    }
+                });
+
+                gsap.to($postsContent, {
+                    opacity:1,
+                    y:0,
+                    stagger:.1,
+                    delay:.25,
+                    scrollTrigger: {
+                        trigger: $slider,
+                        start: 'top center+=15%',
+                        markers:true,
+                    }
+                });
+                    
+                    
+            }
+        });
+        
     }());
 	
 	refreshSmooth.init();
