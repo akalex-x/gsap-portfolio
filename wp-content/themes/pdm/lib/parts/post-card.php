@@ -7,15 +7,25 @@
 
     $feat_img = getIMG($thumbnail_id, 'post');
     $permalink = get_the_permalink();
+    $term_list = wp_get_post_terms($post->ID, 'category', ['fields' => 'all']);
+    $category;
+    foreach($term_list as $term) {
+       if( get_post_meta($post->ID, '_yoast_wpseo_primary_category',true) == $term->term_id ) {
+         // this is a primary category
+            $category = $term;
+       }
+    }
 ?>
 
 <article class="post-card">
-    <a class="post-card__thumb" href="<?php echo $permalink; ?>" draggable="false">
-        <div class="positioner"><?php echo $feat_img; ?></div>
+    <div class="post-card__meta">
+        <span class="post-card__date"><?php echo get_the_date('m/d/Y'); ?></span>
+        <a class="post-card__category" href="/blog/category/<?php echo $category->slug; ?>"><?php echo $category->name; ?></a>
+    </div>
+    <a class="post-card__thumb" href="<?php echo $permalink; ?>">
+        <?php echo $feat_img; ?>
     </a>
     <div class="post-card__content">
-        <h3><?php the_title(); echo ' ' . $index; ?></h3>
-        <p><?php echo excerpt(30); ?></p>
-        <a href="<?php echo $permalink; ?>">Read More</a>
+        <h3><a href="<?php echo $permalink; ?>"><?php the_title(); ?></a></h3>
     </div>
 </article>

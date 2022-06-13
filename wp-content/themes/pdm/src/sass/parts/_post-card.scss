@@ -1,9 +1,28 @@
 .post-card {
-    &__thumb {
-        background-color: $xlgray;
+    &__meta{
+        display: flex;
+        justify-content: space-between;
+        span,a{
+            color: $white;
+            text-transform: uppercase;
+            font-family: 'Neue Machina';
+            font-weight: 300;
+            font-size: .9rem;
+        }
+    }
+    &__thumb{
+        margin: 1rem 0 1.5rem;
         display: block;
-        padding-bottom: 56%;
-        position: relative;
-        margin-bottom: 1rem;
+    }
+    &__content{
+        h3{
+            text-transform: uppercase;
+            font-family: 'Neue Machina';
+            width: calc(100% - 5rem);
+            a{
+                color: $white;
+                text-decoration: none;
+            }
+        }
     }
 }
