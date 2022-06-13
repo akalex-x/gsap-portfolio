@@ -14,8 +14,13 @@
             display: inline;
             text-transform: uppercase;
             line-height: 1.25;
+            color: rgba(255,255,255,.25);
+            .highlight,
+            .highlight-2{
+                color: $white;
+            }
             .color{
-                color: $primary;
+//                color: $primary;
             }
             .stroke{
                 color: transparent;
@@ -38,9 +43,18 @@
             .placeholder,
             h2,
             p{
-                font-size: 4.5vw;
+                font-size: 4.25vw;
                 line-height: 1.1;
+                color: $white;
+                transition-duration: .25s;
             }
+//            &:hover{
+                .placeholder,
+                h2,
+                p{
+                    color: rgba(255,255,255,.4);
+                }
+//            }
         }
     }
     &__gradient{

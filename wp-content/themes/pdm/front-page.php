@@ -60,8 +60,8 @@
         </div>
         
         <div class="callout__content">
-            <span class="placeholder">Hi i'm </span> <h2><span class="stroke">Alex Kinejara</span>,<br/> a <span class="serif">creative</span> web developer in San Diego, CA<span class="color">.</span></h2>
-            <p>I help brands craft an <span class="serif">effective</span> online presence &amp; <span class="serif">strategy</span>, by developing websites <span class="serif">taylored</span> to their specific needs<span class="color">.</span></p>
+            <span class="placeholder">Hi i'm </span> <h2><span class="highlight">Alex Kinejara</span>,<br/> a <span class="highlight-2">creative web developer</span> in San Diego, CA<span class="color">.</span></h2>
+            <p>I help brands craft an <span class="highlight-2">effective online presence &amp; strategy</span> by developing websites tailored to their specific needs<span class="color">.</span></p>
         </div>
         
     </div>

@@ -549,8 +549,8 @@ jQuery(document).ready(function ($) {
             endTrigger: $projects,
             end: 'top top',
 //            markers:true,
-            onEnter: function(){ if( $(window).width() >= 960 ){ goToSection( $projects, '-10' ); } },
-            onEnterBack: function(){ if( $(window).width() >= 960 ){ goToSection( $hero ); } },
+//            onEnter: function(){ if( $(window).width() >= 960 ){ goToSection( $projects, '-10' ); } },
+//            onEnterBack: function(){ if( $(window).width() >= 960 ){ goToSection( $hero ); } },
 //            onEnter: function(){ goToSection( $projects, '-10' ); },
 //            onEnterBack: function(){ goToSection( $hero ); },
         });
@@ -649,6 +649,15 @@ jQuery(document).ready(function ($) {
                 pauseTimeline(loop)
             });
             
+            setTimeout(function(){
+                var restore = loop.time();
+                if( loop.reversed() ){
+                    loop.restart().invalidate().time(restore).reverse();
+                }else{
+                    loop.restart().invalidate().time(restore);
+                }
+            },4000);
+            
         });
         
         if( $(window).width() < 960 ){ return; }
@@ -722,7 +731,12 @@ jQuery(document).ready(function ($) {
             
             var $words = $this.find('.curtain');
             
-            horizontalLoop($words, {paused: false,repeat:-1, speed:.25})
+            var loop = horizontalLoop($words, {paused: false,repeat:-1, speed:.25});
+            
+            setTimeout(function(){
+                var restore = loop.time();
+                loop.restart().invalidate().time(restore);
+            },4000);
             
         });
         
@@ -787,8 +801,8 @@ jQuery(document).ready(function ($) {
                     duration:.5,
                     scrollTrigger: {
                         trigger: $slider,
-                        start: 'top center+=20%',
-                        markers:true,
+                        start: 'top center+=15%',
+//                        markers:true,
                     }
                 });
 
@@ -800,7 +814,7 @@ jQuery(document).ready(function ($) {
                     scrollTrigger: {
                         trigger: $slider,
                         start: 'top center+=15%',
-                        markers:true,
+//                        markers:true,
                     }
                 });
                     
