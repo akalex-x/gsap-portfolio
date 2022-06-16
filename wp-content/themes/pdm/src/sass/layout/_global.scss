@@ -13,8 +13,8 @@ html, body {
 }
 
 body {
-    background: $white;
-    color: $black;
+    background: $black;
+    color: $white;
     font-family: $sans;
     line-height: $line-height;
 
@@ -219,6 +219,8 @@ h6, .h6 {
     font-weight: $heading_weight;
     line-height: 1.2;
     margin: 0;
+    display: block;
+    margin-bottom: 1.5rem;
 
     * + & {
         margin-top: 1rem;
@@ -543,6 +545,7 @@ button.reset{
     overflow: hidden;
     font-size: .9rem;
     padding-bottom: .25rem;
+    white-space: nowrap;
     .dotSymbol{
         color: $primary;
     }

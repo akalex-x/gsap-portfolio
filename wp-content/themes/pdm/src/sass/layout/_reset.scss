@@ -201,7 +201,6 @@ main {
 }
 
 blockquote,
-ul, ol, li, p,
 table, hr {
     margin: 1rem 0 0;
 
@@ -211,6 +210,13 @@ table, hr {
 
     @media (min-width: 720px) {
         margin-top: 1.5rem;
+    }
+}
+
+p,li{
+    margin-bottom: 1rem;
+    &:last-of-type{
+        margin-bottom: 0;
     }
 }
 
