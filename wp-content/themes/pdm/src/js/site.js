@@ -386,33 +386,7 @@ jQuery(document).ready(function ($) {
         $el.html(spanWords)
     }
     
-    var loopBtns = (function(){
-        
-        var $btns = $('.loop-btn');
-        
-        if( !$btns.length ){ return; }
-                
-        $btns.each(function(){
-            
-            var $this = $(this);
-            
-            splitWords($this);
-            
-            var clone = $this.clone();
-            $(clone).find('.curtain').addClass('clone');
-            $this.append($(clone).html());
-            
-            var $words = $this.find('.curtain');
-            
-            document.fonts.ready.then(function () {
-                var loop = horizontalLoop($words, {paused: false,repeat:-1, speed:.25});
-            });
-            
-        });
-        
-    }());
-    
-    function ajaxPrep(){
+    function ajaxPrep($internalLinks){
         
         var $body = $('body');
         var $main = $('main');
@@ -430,6 +404,7 @@ jQuery(document).ready(function ($) {
         ajaxStart.to($main,{
             opacity:0,
             onComplete: function(){
+                $internalLinks.off();
                 $main.empty();
                 $body.addClass('ajax-ready');
             },
@@ -460,7 +435,13 @@ jQuery(document).ready(function ($) {
                 
                 window.scrollTo(0, 0);
                 
-                var bodyClass = $(response).find('body').attr('class');
+                var parser = new DOMParser();
+                doc = parser.parseFromString(response, "text/html");
+                var bodyClass = doc.body.getAttribute('class');
+                parser = doc = null;
+                
+                console.log(bodyClass);
+                
                 $body.attr('class',bodyClass);
                 
                 var main = $(response).find('main').clone();
@@ -471,6 +452,8 @@ jQuery(document).ready(function ($) {
                     opacity:1,
                     delay:.25,
                 });
+                
+                LazyLoading.update();
                 
                 initSite();
                 
@@ -514,6 +497,83 @@ jQuery(document).ready(function ($) {
     }
     
     function initSite(){
+        
+        var ajaxPage = (function(){
+            
+            var siteURL = document.location.origin;
+            
+            var $internalLinks = $("a[href^='"+siteURL+"'], a[href^='/'], a[href^='./'], a[href^='../'], a[href^='#']");
+
+            $internalLinks = $internalLinks.not(function () {
+              return $(this).attr('href').match(/\.(pdf|mp3|jpg|jpeg|etc)$/i);
+            });
+
+            $internalLinks = $internalLinks.not(function () {
+              return $(this).attr('href').match(/wp-admin/);
+            });
+            
+            console.log('ajaxubg');
+            
+            $internalLinks.click(function(e){
+                
+                console.log('clicked');
+               
+                e.preventDefault();
+                
+                var $this = $(this);
+                
+                $('.alt-cursor .portfolio-cursor').css('visibility', 'hidden');
+                $('.alt-cursor .basic').show();
+                
+                ajaxPrep($internalLinks);
+                    
+                var url = $this.attr('href');
+                 
+                 console.log(url);
+                 
+
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'html',
+                    url: url,
+                    success: function (response) {
+
+                 console.log(url);
+                        ajaxMeta(response,url);
+                        ajaxMain(response);
+
+                    }
+                });
+                    
+            });
+            
+        }());
+        
+        var loopBtns = (function(){
+
+            var $btns = $('.loop-btn');
+
+            if( !$btns.length ){ return; }
+
+            $btns.each(function(){
+
+                var $this = $(this);
+
+                splitWords($this);
+
+                var clone = $this.clone();
+                $(clone).find('.curtain').addClass('clone');
+                $this.append($(clone).html());
+
+                var $words = $this.find('.curtain');
+
+                document.fonts.ready.then(function () {
+                    var loop = horizontalLoop($words, {paused: false,repeat:-1, speed:.25});
+                });
+
+            });
+
+        }());
 	
         var homeHero = (function(){
 
@@ -599,41 +659,6 @@ jQuery(document).ready(function ($) {
             if( $(window).width() < 960 ){ return; }
             
             spin3D($('.centered-hero__video'));
-
-//            var video3D = (function(){
-//
-//                if( $(window).width() < 960 ){ return; }
-//
-//                var request = null;
-//                var mouse = { x: 0, y: 0 };
-//                var cx = window.innerWidth / 2;
-//                var cy = window.innerHeight / 2;
-//
-//                $('body').mousemove(function(event) {
-//
-//                    mouse.x = event.pageX;
-//                    mouse.y = event.pageY;
-//
-//                    cancelAnimationFrame(request);
-//                    request = requestAnimationFrame(update);	
-//                });
-//
-//                function update() {
-//                    dx = mouse.x - cx;
-//                    dy = mouse.y - cy;
-//                    tiltx = (dy / cy);
-//                    tilty = - (dx / cx);
-//                    radius = Math.sqrt(Math.pow(tiltx,2) + Math.pow(tilty,2));
-//                    degree = (radius * 30);
-//                    gsap.to(".centered-hero__video", 1, {transform:'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)', ease:Power2.easeOut});
-//                }
-//
-//                $(window).resize(function() {
-//                    cx = window.innerWidth / 2;
-//                    cy = window.innerHeight / 2;
-//                });	
-//
-//            }());
 
         }());
 
@@ -740,33 +765,6 @@ jQuery(document).ready(function ($) {
 
                 }
 
-            });
-            
-            $projectLinks.click(function(e){
-               
-                e.preventDefault();
-                
-                var $this = $(this);
-                
-                $('.alt-cursor .portfolio-cursor').css('visibility', 'hidden');
-                $('.alt-cursor .basic').show();
-                
-                ajaxPrep();
-                    
-                var url = $this.attr('href');
-
-                $.ajax({
-                    type: 'GET',
-                    dataType: 'html',
-                    url: url,
-                    success: function (response) {
-
-                        ajaxMeta(response,url);
-                        ajaxMain(response);
-
-                    }
-                });
-                    
             });
 
         }());
@@ -878,7 +876,7 @@ jQuery(document).ready(function ($) {
             
             var phtl = gsap.timeline({
                 repeat:false,
-                delay:2,
+                delay:1,
                 defaults: {
                     duration: 1,
                 }
